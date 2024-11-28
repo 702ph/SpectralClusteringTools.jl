@@ -1,0 +1,7 @@
+name = "SpectralClusteringTools"
+uuid = "63c56273-7a63-415a-a2d3-86594e5757fc"
+authors = ["Sh F <fuchigami@campus.tu-berlin.de>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
