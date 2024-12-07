@@ -1,5 +1,8 @@
 module SpectralClusteringTools
 
+include("Utils/DataSets.jl")
+
+
 """
     timestwo(x)
 
