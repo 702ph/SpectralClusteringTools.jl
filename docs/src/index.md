@@ -18,16 +18,15 @@ A package for creating test data and providing functions to facilitate clusterin
 
 ## Getting Started
 ### Installation
-
 Install using the Julia's package manager. In the Julia REPL, type `] for entering the Pkg REPL mode and run
 
 ```
-pkg> add SpectralClusteringTools
+pkg> add "https://github.com/702ph/SpectralClusteringTools.jl"
 ```
 type CTRL + C to back the Julia REPL. Equivalently with the Pkg API:
 ```
 julia> import Pkg 
-Julia> Pkg.add("SpectralClusteringTools")
+Julia> Pkg.add(url="https://github.com/702ph/SpectralClusteringTools.jl")
 ```
 
 
