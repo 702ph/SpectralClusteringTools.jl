@@ -21,16 +21,58 @@ A package for creating test data and providing functions to facilitate clusterin
 
 
 ## Installation
-Install using the Julia's package manager. In the Julia REPL, type `] for entering the Pkg REPL mode and run
+This guide will help you set up and install the SpectralClusteringTools.jl package, which is developed as part of a university project for Julia version 1.10. Follow the steps below to ensure a successful installation.
+
+### Step 1: Cloning the Git Repository
+1. Open a terminal (command line interface) on your system.
+2. Run the following commands to clone the repository and navigate to its directory:
+```
+git clone "https://github.com/702ph/SpectralClusteringTools.jl"
+cd SpectralClusteringTools
 
 ```
-pkg> add "https://github.com/702ph/SpectralClusteringTools.jl"
+- The first command downloads the repository from GitHub to your local machine.
+- The second command changes your current directory to the repository folder, where the package is located.
+
+
+3. After navigating to the project folder, launch Julia by typing:
 ```
-type CTRL + C to back the Julia REPL. Equivalently with the Pkg API:
+julia
 ```
-julia> import Pkg 
-Julia> Pkg.add(url="https://github.com/702ph/SpectralClusteringTools.jl")
+This starts the Julia REPL (Read-Eval-Print Loop), an interactive environment where you can execute Julia commands.
+
+
+### Step 2: Preparation for using the package
+1. Inside the Julia REPL, enter the package manager mode by typing:
 ```
+using Pkg
+```
+
+2.Activate the local environment for the project by running:
+```
+Pkg.activate(".")
+```
+- The `activate()` command tells Julia to use the package environment defined in the current directory (`.` refers to the current folder where the project was cloned).
+
+3. Install all dependencies specified in the project's Project.toml file:
+```
+Pkg.instantiate()
+```
+The `instantiate()` command ensures all required packages for the project are downloaded and installed.
+
+
+
+### Notes and Troubleshooting
+- *Julia Version*: This project is developed and tested with *Julia version 1.10*. Ensure that you have this version installed on your system. You can check your Julia version by running:
+```
+julia --version
+```
+- *Dependencies*: The Pkg.instantiate() command will automatically install all required dependencies. If you encounter issues, try running Pkg.update() to ensure you have the latest compatible versions of the packages.
+
+
+## Example
+Please refer to the example section in the documentation.
+[docs-stable-url]
 
 
 ## Documentation
