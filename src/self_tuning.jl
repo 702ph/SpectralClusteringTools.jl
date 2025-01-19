@@ -1,5 +1,6 @@
 export self_tuning_spectral_clustering
 """
+v_0.001
 Parameters for Self-Tuning Spectral Clustering
 """
 struct SelfTuningParams
@@ -15,8 +16,19 @@ struct GivensRotation
 end
 
 """
-Compute local scaling parameters σᵢ for each point
-σᵢ = d(sᵢ, s_K) where s_K is the K-th neighbor of point sᵢ
+compute_local_scaling(X::Matrix{Float64}, K::Int)
+
+Compute the local scaling parameters σᵢ for each point in the input matrix X.
+
+The local scaling parameter σᵢ is defined as the distance from point sᵢ to its Kth nearest neighbor.
+
+Parameters:
+- `X::Matrix{Float64}`: The input data matrix.
+- `K::Int`: The number of nearest neighbors to consider for the local scaling computation.
+
+Returns:
+- `σ::Vector{Float64}`: The vector of local scaling parameters, one for each data point.
+- `analysis_info::Dict`: A dictionary containing additional information used in the local scaling computation, such as the KD-tree, distances to neighbors, and neighbor indices.
 """
 function compute_local_scaling(X::Matrix{Float64}, K::Int)
     n = size(X, 2)
@@ -39,12 +51,22 @@ function compute_local_scaling(X::Matrix{Float64}, K::Int)
 end
 
 """
-Construct self-tuning affinity matrix that can handle both spherical data and concentric circles.
+construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningParams; is_spherical::Bool=false)
+
+Construct the self-tuning affinity matrix A based on the input data matrix X and the provided self-tuning parameters.
+
+The self-tuning affinity matrix is computed as:
 Aᵢⱼ = exp(-d²(sᵢ,sⱼ)/(σᵢσⱼ))
-Key features:
-1. Adaptive local scaling parameter computation
-2. Support for both spherical and Euclidean distances
-3. Enhanced connectivity for circular structures
+
+where d(sᵢ, sⱼ) is the distance between data points sᵢ and sⱼ, and σᵢ and σⱼ are the local scaling parameters computed for each point.
+
+Parameters:
+- `X::Matrix{Float64}`: The input data matrix.
+- `params::SelfTuningParams`: A struct containing the self-tuning parameters, including the number of neighbors `K` for local scaling and whether to use local scaling.
+- `is_spherical::Bool=false`: A flag indicating whether the data is on a spherical manifold (default is false, i.e., planar data).
+
+Returns:
+- `A::Matrix{Float64}`: The self-tuning affinity matrix.
 """
 function construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningParams; 
                                       is_spherical::Bool=false)
@@ -146,7 +168,15 @@ function construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningPa
 end
 
 """
-Apply Givens rotation to a matrix
+apply_givens_rotation!(X::Matrix{Float64}, G::GivensRotation)
+
+Apply a Givens rotation to the input matrix X.
+
+A Givens rotation is a plane rotation that operates on a pair of columns in a matrix. This function updates the matrix X in-place by applying the specified Givens rotation.
+
+Parameters:
+- `X::Matrix{Float64}`: The input matrix to be rotated.
+- `G::GivensRotation`: A struct containing the parameters of the Givens rotation to be applied, including the row indices `i` and `j`, and the rotation angle `θ`.
 """
 function apply_givens_rotation!(X::Matrix{Float64}, G::GivensRotation)
     c = cos(G.θ)
@@ -162,26 +192,23 @@ end
 
 
 """
-Recover the rotation matrix R which best aligns X's columns with the canonical coordinate
-system using incremental gradient descent scheme.
+recover_rotation(X::Matrix{Float64}; max_iter::Int=2000, tol::Float64=1e-6, α::Float64=0.1)
 
-Based on Appendix A of the paper:
-1. Uses Givens rotations for minimal parameterization
-2. Implements gradient descent to minimize the cost function
-3. Updates rotation incrementally
+Recover the optimal rotation matrix R that best aligns the columns of the input matrix X with the canonical coordinate system.
+
+This function uses an incremental gradient descent scheme based on Givens rotations to minimize the cost function and find the optimal rotation matrix.
 
 Parameters:
-- X: Matrix of eigenvectors to be aligned
-- max_iter: Maximum number of iterations for gradient descent
-- tol: Tolerance for convergence
-- α: Learning rate for gradient descent
+- `X::Matrix{Float64}`: The input matrix of eigenvectors to be aligned.
+- `max_iter::Int=2000`: The maximum number of iterations for the gradient descent algorithm.
+- `tol::Float64=1e-6`: The tolerance for convergence of the gradient descent algorithm.
+- `α::Float64=0.1`: The learning rate for the gradient descent algorithm.
 
 Returns:
-- R: The optimal rotation matrix
-- Z: The aligned matrix (Z = XR)
-- cost: Final cost value
+- `R::Matrix{Float64}`: The optimal rotation matrix.
+- `Z::Matrix{Float64}`: The input matrix X rotated by the optimal rotation matrix R.
+- `cost::Float64`: The final cost value of the optimization.
 """
-
 function recover_rotation(X::Matrix{Float64}; 
                     max_iter::Int=2000, 
                     tol::Float64=1e-6,
@@ -264,8 +291,21 @@ end
 
 
 """
-Determine optimal number of clusters based on eigenvalues and eigenvectors alignment
-using average cost comparison method.
+determine_best_C(eigvals::Vector{Float64}, eigvecs::Matrix{Float64}, max_C::Int)
+
+Determine the optimal number of clusters based on the eigenvalues and eigenvectors of the normalized Laplacian matrix.
+
+This function uses the average cost comparison method to find the number of clusters whose alignment cost is closest to the average cost across all potential cluster counts.
+
+Parameters:
+- `eigvals::Vector{Float64}`: The vector of eigenvalues of the normalized Laplacian matrix.
+- `eigvecs::Matrix{Float64}`: The matrix of eigenvectors of the normalized Laplacian matrix.
+- `max_C::Int`: The maximum number of clusters to consider.
+
+Returns:
+- `best_C::Int`: The optimal number of clusters.
+- `best_R::Matrix{Float64}`: The rotation matrix that best aligns the eigenvectors for the optimal number of clusters.
+- `best_Z::Matrix{Float64}`: The input eigenvectors rotated by the optimal rotation matrix.
 """
 function determine_best_C(eigvals::Vector{Float64}, eigvecs::Matrix{Float64}, max_C::Int)
     normalized_eigvals = eigvals ./ maximum(eigvals)
@@ -308,16 +348,23 @@ end
 
 
 """
-Analyze eigengaps to determine the optimal number of clusters and corresponding eigenvectors.
-Based on the theory that:
-1. For ideal case, eigenvalue 1 should be repeated C times (C = number of clusters)
+analyze_eigengaps(L::Matrix{Float64}, max_C::Int)
+
+Analyze the eigengaps to determine the optimal number of clusters and the corresponding eigenvectors.
+
+This function is based on the theory that:
+1. For the ideal case, the eigenvalue 1 should be repeated C times (where C is the number of clusters)
 2. There should be a significant gap between the C-th and (C+1)-th eigenvalues
-3. The first C eigenvectors should correspond to cluster indicators
+3. The first C eigenvectors should correspond to cluster indicator vectors
+
+Parameters:
+- `L::Matrix{Float64}`: The normalized Laplacian matrix.
+- `max_C::Int`: The maximum number of clusters to consider.
 
 Returns:
-- X: Matrix of selected eigenvectors (before rotation)
-- best_C: Optimal number of clusters
-- analysis_info: Dictionary containing analysis details
+- `Z::Matrix{Float64}`: The matrix of selected eigenvectors (before rotation).
+- `best_C::Int`: The optimal number of clusters.
+- `analysis_info::Dict`: A dictionary containing detailed analysis information, such as the rotation matrix, aligned eigenvectors, and clustering cost.
 """
 function analyze_eigengaps(L::Matrix{Float64}, max_C::Int)
     
@@ -377,25 +424,27 @@ function analyze_eigengaps(L::Matrix{Float64}, max_C::Int)
 end
 
 """
-Self-tuning spectral clustering main function
+self_tuning_spectral_clustering(X::Matrix{Float64}, max_C::Int, params::SelfTuningParams; is_spherical::Bool=false)
 
-This implementation follows the algorithm described in the paper:
-1. Compute local scaling parameters
-2. Construct affinity matrix using local scaling
-3. Compute normalized Laplacian
-4. Find eigenvectors and determine optimal number of clusters
-5. Recover rotation matrix for alignment
-6. Perform final clustering
+Perform self-tuning spectral clustering on the input data matrix X.
+
+This function implements the full self-tuning spectral clustering algorithm, including the following steps:
+1. Construct the self-tuning affinity matrix.
+2. Compute the normalized Laplacian matrix.
+3. Analyze the eigengaps to determine the optimal number of clusters.
+4. Recover the optimal rotation matrix to align the eigenvectors.
+5. Perform k-means clustering on the rotated eigenvectors.
 
 Parameters:
-- X: Input data matrix
-- max_C: Maximum number of clusters to consider
-- params: Self-tuning parameters (K for local scaling)
+- `X::Matrix{Float64}`: The input data matrix.
+- `max_C::Int`: The maximum number of clusters to consider.
+- `params::SelfTuningParams`: A struct containing the self-tuning parameters, including the number of neighbors `K` for local scaling and whether to use local scaling.
+- `is_spherical::Bool=false`: A flag indicating whether the data is on a spherical manifold (default is false, i.e., planar data).
 
 Returns:
-- assignments: Cluster assignments for each data point
-- best_C: Optimal number of clusters
-- analysis_info: Detailed analysis information
+- `assignments::Vector{Int}`: The cluster assignments for each data point.
+- `best_C::Int`: The optimal number of clusters.
+- `analysis_info::Dict`: A dictionary containing detailed analysis information, such as the rotation matrix, aligned eigenvectors, and clustering cost.
 """
 
 function self_tuning_spectral_clustering(X::Matrix{Float64}, 
