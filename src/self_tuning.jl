@@ -1,5 +1,6 @@
 export self_tuning_spectral_clustering
 """
+v0.001
 Parameters for Self-Tuning Spectral Clustering
 """
 struct SelfTuningParams
