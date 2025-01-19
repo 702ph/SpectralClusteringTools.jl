@@ -28,7 +28,7 @@ This guide will help you set up and install the SpectralClusteringTools.jl packa
 2. Run the following commands to clone the repository and navigate to its directory:
 ```
 git clone "https://github.com/702ph/SpectralClusteringTools.jl"
-cd SpectralClusteringTools
+cd SpectralClusteringTools.jl
 
 ```
 - The first command downloads the repository from GitHub to your local machine.
