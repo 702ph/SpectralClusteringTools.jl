@@ -1,6 +1,6 @@
 # SpectralClusteringTools
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://702ph.github.io/SpectralClusteringTools.jl/stable/)
+
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://702ph.github.io/SpectralClusteringTools.jl/dev/)
 [![Build Status](https://github.com/702ph/SpectralClusteringTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/702ph/SpectralClusteringTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/702ph/SpectralClusteringTools.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/702ph/SpectralClusteringTools.jl)
@@ -36,3 +36,4 @@ Julia> Pkg.add(url="https://github.com/702ph/SpectralClusteringTools.jl")
 ## Documentation
 - [**STABLE**][docs-stable-url] &mdash; **documentation of the most recently tagged version.**
 - [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
+

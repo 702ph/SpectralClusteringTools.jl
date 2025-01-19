@@ -2,8 +2,7 @@ export make_sphere
 
 
 """
-    make_sphere(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
-
+make_sphere(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
 Generates a dataset of points distributed on the surfaces of spheres。 
 Each sphere corresponds to a class, and points are normalized.
 
