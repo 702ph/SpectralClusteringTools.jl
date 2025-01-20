@@ -112,8 +112,9 @@ function visualize_3d_clusters(points, labels, title)
         group=labels,
         title=title,
         xlabel="X", ylabel="Y", zlabel="Z",
+        aspect_ratio=:auto,
         marker=:circle,
-        markersize=2,
+        markersize=0.5,
         alpha=0.7,
         camera=(45, 45),
         grid=false,
@@ -127,14 +128,11 @@ end
 # Computing the best sigma
 function calculate_optimal_sigma(X)
     n_points = size(X, 2)
-    
     k_nearest = min(7, n_points - 1)
-    
     dists = zeros(n_points)
-    
+
     for i in 1:n_points
         current_point_dists = Float64[]
-    
         for j in 1:n_points
             if i != j
                 distance = norm(X[:,i] - X[:,j])
@@ -192,9 +190,11 @@ predicted_labels = spectral_clustering(X_clustering, num_classes, params)
 
 
 # Visualize the Result
-p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data")
-p2 = visualize_3d_clusters(X, predicted_labels, "Spectral Clustering Results")
+# (Make sure to add a semicolon (;) at the end, otherwise the graph sub-window will open.)
+p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data");
+p2 = visualize_3d_clusters(X, predicted_labels, "Spectral Clustering Results");
 plot(p1, p2, layout=(1,2), size=(1200,600))
+
 ```
 
 
