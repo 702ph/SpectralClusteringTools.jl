@@ -42,13 +42,16 @@ julia
 This starts the Julia REPL (Read-Eval-Print Loop), an interactive environment where you can execute Julia commands.
 
 
-### Step 2: Preparation for using the package
-1. Inside the Julia REPL, enter the package manager mode by typing:
+### Step 2: Getting the Package Ready for Use
+Once the Julia REPL has started, you should perform the necessary steps to use the package. Follow these steps
+
+1. Inside the Julia REPL, import the package manager by typing:
 ```
 using Pkg
 ```
 
-2.Activate the local environment for the project by running:
+
+2. Activate the local environment for the project by running:
 ```
 Pkg.activate(".")
 ```
@@ -71,8 +74,72 @@ julia --version
 
 
 ## Example
-Please refer to the example section in the documentation.
-[docs-stable-url]
+In this section, we will explain step by step how to perform clustering on data. First, load the required packages:
+```
+using SpectralClusteringTools
+using Random
+using Plots
+```
+
+
+If the compilation of Plots fails, you may need to roll back the version of GR to 0.73.10 by running the following command. For more details on this issue, refer to the following link: https://github.com/jheinen/GR.jl/issues/556
+
+```
+Pkg.add(PackageSpec(name="GR", version="0.73.10"))
+```
+
+Next, to enable interactive operations, set *Plotly* as the backend for *Plots*:
+```
+import PlotlyJS
+plotlyjs()
+```
+
+Now, let's create a function to visualize the data. (This function is planned to be included in the package in the future.)
+```
+# A function for visualize given data as a 3D scatter plot grouped by labels.
+function plot_data(data, labels, title="Visualization")
+    scatter3d(data[:, 1], data[:, 2], data[:, 3],
+              group=labels, title=title,
+              xlabel="X", ylabel="Y", zlabel="Z", aspect_ratio=:auto,
+              markersize=0.5)
+end
+```
+
+
+Follow the steps below to generate test data, perform clustering, and compare the test data with the clustering results.
+```
+<!-- # Generate Test Data 
+points, labels = make_spheres(3, 200, 0.1, true) -->
+
+# Test Data Generation Settings 
+Random.seed!(42)
+num_classes = 3
+points_per_class = 100
+noise = 0.1
+adjust_scale = True
+
+# Generate Test Data 
+ X, true_labels = make_spheres(num_classes, points_per_class, noise, adjust_scale)
+
+<!-- # Visualize data
+plot_data(points, labels, "Multiclass Spheres(Original)") -->
+
+
+
+# Perfoming Clustering 
+#TODO: add or fixcode here
+graph = epsilon_neighborhood_graph(sphere_data)
+???? = next_fuction(graph)
+
+clustered_labels = ????(???)
+
+
+# Visualize the result
+#TODO: add or fix code here
+plot_data(sphere_data, clustered_labels, "Multiclass Spheres(Clustered)")
+
+```
+
 
 
 ## Documentation
