@@ -75,42 +75,97 @@ julia --version
 
 ## Example
 In this section, we will explain step by step how to perform clustering on data. First, load the required packages:
-```
+```julia
 using SpectralClusteringTools
-using Random
+using LinearAlgebra
 using Plots
+using Random
+using Statistics
 ```
 
 
 If the compilation of Plots fails, you may need to roll back the version of GR to 0.73.10 by running the following command. For more details on this issue, refer to the following link: https://github.com/jheinen/GR.jl/issues/556
 
-```
+```julia
 Pkg.add(PackageSpec(name="GR", version="0.73.10"))
 ```
 
 Next, to enable interactive operations, set *Plotly* as the backend for *Plots*:
-```
+```julia
 import PlotlyJS
 plotlyjs()
 ```
 
-Now, let's create a function to visualize the data. (This function is planned to be included in the package in the future.)
-```
-# A function for visualize given data as a 3D scatter plot grouped by labels.
+Now, create helper functions (These function is planned to be included in the package in the future.)
+```julia
+# visualize given data as a 3D scatter plot grouped by labels.
 function plot_data(data, labels, title="Visualization")
     scatter3d(data[:, 1], data[:, 2], data[:, 3],
               group=labels, title=title,
               xlabel="X", ylabel="Y", zlabel="Z", aspect_ratio=:auto,
               markersize=0.5)
 end
+
+function visualize_3d_clusters(points, labels, title)
+    p = scatter(
+        points[:, 1], points[:, 2], points[:, 3],
+        group=labels,
+        title=title,
+        xlabel="X", ylabel="Y", zlabel="Z",
+        marker=:circle,
+        markersize=2,
+        alpha=0.7,
+        camera=(45, 45),
+        grid=false,
+        background_color=:white
+    )
+    return p
+end
+
+
+
+# Computing the best sigma
+function calculate_optimal_sigma(X)
+    n_points = size(X, 2)
+    
+    k_nearest = min(7, n_points - 1)
+    
+    dists = zeros(n_points)
+    
+    for i in 1:n_points
+        current_point_dists = Float64[]
+    
+        for j in 1:n_points
+            if i != j
+                distance = norm(X[:,i] - X[:,j])
+                push!(current_point_dists, distance)
+            end
+        end
+        sorted_dists = sort(current_point_dists)
+        if length(sorted_dists) >= k_nearest
+            dists[i] = mean(sorted_dists[1:k_nearest])
+        else
+            dists[i] = mean(sorted_dists)
+        end
+    end
+    
+    local_sigma = median(dists)
+    println("Dist Summ")
+    println("  Min dist", round(minimum(dists), digits=4))
+    println("  Max Dist", round(maximum(dists), digits=4))
+    println("  Median Dist", round(local_sigma, digits=4))
+    
+    optimal_sigma = local_sigma * 0.15
+    println("  Computed Sigma:", round(optimal_sigma, digits=4))
+    
+    return optimal_sigma
+end
+
 ```
 
 
 Follow the steps below to generate test data, perform clustering, and compare the test data with the clustering results.
-```
-<!-- # Generate Test Data 
-points, labels = make_spheres(3, 200, 0.1, true) -->
-
+```julia
 # Test Data Generation Settings 
 Random.seed!(42)
 num_classes = 3
@@ -118,26 +173,28 @@ points_per_class = 100
 noise = 0.1
 adjust_scale = True
 
+
 # Generate Test Data 
  X, true_labels = make_spheres(num_classes, points_per_class, noise, adjust_scale)
 
-<!-- # Visualize data
-plot_data(points, labels, "Multiclass Spheres(Original)") -->
+
+# Data Preparation
+X_norm = (X .- mean(X, dims=1)) ./ std(X, dims=1)
+X_clustering = Matrix(X_norm')
+sigma = calculate_optimal_sigma(X_clustering)
+
+
+# Perform Clustering 
+params = SpectralClusteringParams(
+:fully_connected, 7, 7.0, sigma)
+predicted_labels = spectral_clustering(X_clustering, num_classes, params)
 
 
 
-# Perfoming Clustering 
-#TODO: add or fixcode here
-graph = epsilon_neighborhood_graph(sphere_data)
-???? = next_fuction(graph)
-
-clustered_labels = ????(???)
-
-
-# Visualize the result
-#TODO: add or fix code here
-plot_data(sphere_data, clustered_labels, "Multiclass Spheres(Clustered)")
-
+# Visualize the Result
+p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data")
+p2 = visualize_3d_clusters(X, predicted_labels, "Spectral Clustering Results")
+plot(p1, p2, layout=(1,2), size=(1200,600))
 ```
 
 
