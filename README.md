@@ -74,7 +74,11 @@ julia --version
 
 
 ## Example
-In this section, we will explain step by step how to perform clustering on data. First, load the required packages:
+In this section, we will demonstrate how to generate and cluster synthetic datasets using different data generation functions. Follow the step-by-step instructions below.
+
+### Step 1: Load Required Packages
+First, load the necessary Julia packages:
+
 ```julia
 using SpectralClusteringTools
 using LinearAlgebra
@@ -96,7 +100,8 @@ import PlotlyJS
 plotlyjs()
 ```
 
-Now, create helper functions (These function is planned to be included in the package in the future.)
+### Step 2: Define a Visualization Function
+Define helper functions (These function is planned to be included in the package in the future.)
 ```julia
 # visualize given data as a 3D scatter plot grouped by labels.
 function visualize_3d_clusters(points, labels, title; legendpos=:topright)
@@ -152,10 +157,10 @@ function calculate_optimal_sigma(X)
     
     return optimal_sigma
 end
-
 ```
 
 
+### Step 3: Generate Test Data
 Follow the steps below to generate test data, perform clustering, and compare the test data with the clustering results.
 ```julia
 # Test Data Generation Settings 
@@ -164,13 +169,41 @@ num_classes = 3
 points_per_class = 100
 noise = 0.1
 adjust_scale = True
+```
 
+We can generate different types of datasets using the available functions:
 
-# Generate Test Data 
+#### Example 1: Spheres Dataset
+The `make_spheres` function generates points distributed on the surfaces of spheres.
+```julia
  X, true_labels = make_spheres(num_classes, points_per_class, noise, adjust_scale)
+```
 
 
-# Data Preparation
+#### Example 2: Lines Dataset
+The `make_lines` function generates points distributed along straight lines.
+```julia
+X, true_labels = make_lines(num_classes, points_per_class, noise)
+```
+
+
+#### Example 3: Spirals Dataset
+The `make_spirals` function generates two interlacing spiral patterns.
+```julia
+X, true_labels = make_spirals(points_per_class, noise)
+```
+
+#### Example 4: Blobs Dataset
+The `make_blobs` function generates clusters of points grouped into separate blobs.
+```julia
+X, true_labels = make_blobs(num_classes, points_per_class, noise)
+```
+
+### Step 4: Perform Clustering
+Once the data is generated, we can apply spectral clustering to identify clusters within the data.
+
+```julia
+# Clustering Preparation
 X_norm = (X .- mean(X, dims=1)) ./ std(X, dims=1)
 X_clustering = Matrix(X_norm')
 sigma = calculate_optimal_sigma(X_clustering)
@@ -180,7 +213,6 @@ sigma = calculate_optimal_sigma(X_clustering)
 params = SpectralClusteringParams(
 :fully_connected, 7, 7.0, sigma)
 predicted_labels = spectral_clustering(X_clustering, num_classes, params)
-
 
 
 # Visualize the Result
