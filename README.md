@@ -99,26 +99,20 @@ plotlyjs()
 Now, create helper functions (These function is planned to be included in the package in the future.)
 ```julia
 # visualize given data as a 3D scatter plot grouped by labels.
-function plot_data(data, labels, title="Visualization")
-    scatter3d(data[:, 1], data[:, 2], data[:, 3],
-              group=labels, title=title,
-              xlabel="X", ylabel="Y", zlabel="Z", aspect_ratio=:auto,
-              markersize=0.5)
-end
-
-function visualize_3d_clusters(points, labels, title)
+function visualize_3d_clusters(points, labels, title; legendpos=:topright)
     p = scatter(
         points[:, 1], points[:, 2], points[:, 3],
-        group=labels,
-        title=title,
-        xlabel="X", ylabel="Y", zlabel="Z",
-        aspect_ratio=:auto,
-        marker=:circle,
-        markersize=0.5,
-        alpha=0.7,
-        camera=(45, 45),
-        grid=false,
-        background_color=:white
+        group = labels,
+        title = title,
+        xlabel = "X", ylabel = "Y", zlabel = "Z",
+        aspect_ratio = :auto,
+        marker = :circle,
+        markersize = 0.5,
+        alpha = 0.7,
+        camera = (45, 45),
+        grid = false,
+        background_color = :white,
+        legend = legendpos
     )
     return p
 end
@@ -191,10 +185,9 @@ predicted_labels = spectral_clustering(X_clustering, num_classes, params)
 
 # Visualize the Result
 # (Make sure to add a semicolon (;) at the end, otherwise the graph sub-window will open.)
-p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data");
+p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data", legendpos=:bottomleft);
 p2 = visualize_3d_clusters(X, predicted_labels, "Spectral Clustering Results");
 plot(p1, p2, layout=(1,2), size=(1200,600))
-
 ```
 
 
