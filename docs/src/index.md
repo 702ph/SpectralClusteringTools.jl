@@ -4,31 +4,6 @@ CurrentModule = SpectralClusteringTools
 
 # SpectralClusteringTools
 
-*Tools for Spectral Clustering.*
-
-A package for creating test data and providing functions to facilitate clustering analysis.
-
-
-## Package Features
-- Tools for generating synthetic test datasets for clustering experiments.
-- Functions for preprocessing data to prepare for spectral clustering.
-- Implementation of spectral clustering algorithms.
-- Utilities for visualizing clustering results and data distributions.
-
-
-## Getting Started
-### Installation
-Install using the Julia's package manager. In the Julia REPL, type `] for entering the Pkg REPL mode and run
-
-```
-pkg> add "https://github.com/702ph/SpectralClusteringTools.jl"
-```
-type CTRL + C to back the Julia REPL. Equivalently with the Pkg API:
-```
-julia> import Pkg 
-Julia> Pkg.add(url="https://github.com/702ph/SpectralClusteringTools.jl")
-```
-
 
 ## Example
 ```
@@ -50,7 +25,7 @@ end
 
 
 # Generate test data
-sphere_data, sphere_labels = make_sphere(3, 200)
+sphere_data, sphere_labels = make_spheres(3, 200)
 
 
 # Visualize data
