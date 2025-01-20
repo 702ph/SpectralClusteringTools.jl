@@ -225,5 +225,4 @@ plot(p1, p2, layout=(1,2), size=(1200,600))
 
 
 ## Documentation
-- [**STABLE**][docs-stable-url] &mdash; **documentation of the most recently tagged version.**
-- [**DEVEL**][docs-dev-url] &mdash; *documentation of the in-development version.*
+The [documentation](https://702ph.github.io/SpectralClusteringTools.jl/dev/) of the most recently version.
