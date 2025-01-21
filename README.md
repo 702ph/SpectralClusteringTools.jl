@@ -168,7 +168,7 @@ Random.seed!(42)
 num_classes = 3
 points_per_class = 100
 noise = 0.1
-adjust_scale = True
+adjust_scale = true
 ```
 
 We can generate different types of datasets using the available functions:
