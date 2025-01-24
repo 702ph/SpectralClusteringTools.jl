@@ -21,11 +21,7 @@ Each sphere corresponds to a class, and points are normalized.
 # Example
 `points, labels = make_sphere(3, 1000, 0.1, false)`
 """	
-function make_spheres(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
-	# Input validation
-    num_classes > 0 || throw(ArgumentError("Number of classes must be greater than 0"))
-    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
-	
+function make_sphere(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
 	points = Matrix{Float64}(undef, 0, 3)
 	labels = Vector{Int}(undef, 0)                	
 	    
