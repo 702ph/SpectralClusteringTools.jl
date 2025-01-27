@@ -463,7 +463,7 @@ function self_tuning_spectral_clustering(X::Matrix{Float64},
         
         println("Step 2-3: Computing normalized Laplacian matrix...")
         # 2. Compute the degree matrix D
-        eps_stable = 1e-10
+        eps_stable = 1e-8
         D_values = sum(A, dims=2)[:]
         D_values = [d + eps_stable for d in D_values]  # Add small epsilon to each degree
         D = Diagonal(D_values)
@@ -502,7 +502,7 @@ function self_tuning_spectral_clustering(X::Matrix{Float64},
         
         println("Step 6: Normalizing rotated eigenvectors...")
         norms = sqrt.(sum(Z.^2, dims=2))
-        norms = [n + eps_stable for n in norms] 
+        norms = [max(n, eps_stable) for n in norms] 
         T = Z ./ norms
         
         println("Step 7: Performing k-means clustering...")
@@ -510,14 +510,45 @@ function self_tuning_spectral_clustering(X::Matrix{Float64},
         best_result = nothing
         min_cost = Inf
         
-        # Perform k-means
-        for i in 1:10
-            result = kmeans(T', best_C;
-                          maxiter=500,
-                          display=:none,
-                          init=:kmpp,
-                          tol=1e-6)
-            
+        # Generate initial centroids based on the structure of T
+        n_points = size(T, 1)
+        initial_centroids = zeros(best_C, size(T, 2))
+
+        # Use angle-based initialization for better handling of circular structures
+        for i in 1:best_C
+            # Select points that are most aligned with different directions
+            angles = [atan(T[j,2], T[j,1]) for j in 1:n_points]
+            angle_range = 2π / best_C
+            target_angle = (i-1) * angle_range
+
+            # Find points closest to the target angle
+            angle_diffs = abs.(angles .- target_angle)
+            angle_diffs = min.(angle_diffs, 2π .- angle_diffs)  # Handle circular wrapping
+            _, best_indices = findmin(angle_diffs)
+
+            initial_centroids[i,:] = T[best_indices,:]
+        end
+
+
+        # Multiple k-means runs with different initializations
+        n_init = 50 # Increased number of initializations for better results circle100
+        for i in 1:n_init
+            if i == 1
+                # First run: use our smart initialization
+                result = kmeans(T', best_C;
+                maxiter=1000,  # Increased max iterations
+                display=:none,
+                init=initial_centroids',
+                tol=1e-8)  # Tighter convergence criterion
+            else
+                # Subsequent runs: use k-means++ initialization
+                result = kmeans(T', best_C;
+                maxiter=1000,
+                display=:none,
+                init=:kmpp,
+                tol=1e-8)
+            end
+
             if result.totalcost < min_cost
                 min_cost = result.totalcost
                 best_result = result
