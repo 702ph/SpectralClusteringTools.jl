@@ -1,5 +1,6 @@
 using .SpectralClusteringTools
 using Plots
+export generate_mixed_concentric_data, generate_mixed_moons_data
 """
 generate_mixed_concentric_data()
 
@@ -12,9 +13,9 @@ Returns:
 - `labels::Vector{Int}`: The vector of true cluster labels for each data point.
 """
 function generate_mixed_concentric_data()
-    n_points = 200  
+    n_points = 500 
     
-    function generate_circle(r::Float64, n::Int, noise_level::Float64=0.05)
+    function generate_circle(r::Float64, n::Int, noise_level::Float64=0.1)
         θ = range(0, 2π, length=n)
         noise_r = randn(n) .* noise_level
         return [(r .+ noise_r) .* cos.(θ) (r .+ noise_r) .* sin.(θ)]
@@ -33,16 +34,16 @@ function generate_mixed_concentric_data()
     r3_mix2 = generate_circle(2.0, n_points÷5)
     
     X1 = vcat(r1_main, r1_mix1, r1_mix2)
-    labels1 = fill(1, size(X1, 1))
+    labels1 = fill(1, size(X1, 1))  # All points in X1 are labeled as 1
     
     X2 = vcat(r2_main, r2_mix1, r2_mix2)
-    labels2 = fill(2, size(X2, 1))
+    labels2 = fill(1, size(X2, 1))  # All points in X2 are labeled as 1
     
     X3 = vcat(r3_main, r3_mix1, r3_mix2)
-    labels3 = fill(3, size(X3, 1))
+    labels3 = fill(1, size(X3, 1))  # All points in X3 are labeled as 1
 
     X = vcat(X1, X2, X3)
-    labels = vcat(labels1, labels2, labels3)
+    labels = vcat(labels1, labels2, labels3)  # All points are labeled as 1
     
     return Matrix(X'), labels 
 end
@@ -82,16 +83,13 @@ function generate_mixed_moons_data(n_samples::Int=300, noise::Float64=0.05)
     x2 = 0.5 .- cos.(t) 
     y2 = 0.3 .- sin.(t)  
     
-
     x1 .+= randn(length(x1)) .* noise
     y1 .+= randn(length(y1)) .* noise
     x2 .+= randn(length(x2)) .* noise
     y2 .+= randn(length(y2)) .* noise
     
-   
     n_mix = n_samples ÷ 3  
     
-
     mix_indices1 = rand(1:n_samples, n_mix)
     mix_x1 = x1[mix_indices1] .+ randn(n_mix) .* noise * 2
     mix_y1 = y1[mix_indices1] .+ randn(n_mix) .* noise * 2
@@ -106,141 +104,7 @@ function generate_mixed_moons_data(n_samples::Int=300, noise::Float64=0.05)
     Mix2 = hcat(mix_x1, mix_y1)
     
     X = vcat(X1, Mix1, X2, Mix2)
-    labels = vcat(
-        fill(1, n_samples),
-        fill(1, n_mix),
-        fill(2, n_samples),
-        fill(2, n_mix)
-    )
+    labels = fill(1, size(X, 1))  # All points are labeled as 1
     
     return Matrix(X'), labels
 end
-
-"""
-run_mixed_circle_test()
-
-Run the self-tuning spectral clustering algorithm on the mixed concentric circles dataset and visualize the results.
-
-This function first generates the mixed concentric circles dataset using the `generate_mixed_concentric_data()` function. It then applies the self-tuning spectral clustering algorithm, using the `self_tuning_spectral_clustering()` function, to cluster the data.
-
-The function returns a plot that displays the original data points colored by their true labels, and the data points colored by the predicted labels from the clustering algorithm.
-
-Returns:
-- `result::Any`: The plot object containing the visualization of the original data and the clustering results.
-"""
-function run_mixed_circle_test()
-    X, initial_labels = generate_mixed_concentric_data()
-    
-    params = SelfTuningParams(
-        7,   
-        true  
-    )
-    
-    predicted_labels, best_C, analysis_info = self_tuning_spectral_clustering(
-        X,
-        5,    
-        params
-    )
-    
-
-    p1 = scatter(X[1,:], X[2,:],
-    group=initial_labels,
-    title="Original Mixed Data",
-    xlabel="X", ylabel="Y",
-    marker=:circle,
-    markersize=3,
-    legend=true,
-    aspect_ratio=:equal,
-    palette=:Set1,  
-    seriescolor=:auto  
-    )
-
-    
-    p2 = scatter(X[1,:], X[2,:],
-    group=predicted_labels,
-    title="Clustering Results",
-    xlabel="X", ylabel="Y",
-    marker=:circle,
-    markersize=3,
-    legend=true,
-    aspect_ratio=:equal,
-    palette=:Set1
-    )
-    
-    return plot(p1, p2, layout=(1,2), size=(1200,600))
-end
-
-"""
-run_moons_test()
-
-    Run a test of spectral clustering algorithm on the moon-shaped synthetic dataset.
-
-    # Description
-    This function performs the following steps:
-    1. Generates synthetic moon-shaped data with mixing regions
-    2. Applies self-tuning spectral clustering to the dataset
-    3. Visualizes both the original data and clustering results side by side
-
-    # Implementation Details
-    - Uses `generate_mixed_moons_data()` to create test data
-    - Applies self-tuning spectral clustering with:
-    * 15 nearest neighbors
-    * Local scaling enabled
-    * 2 target clusters
-    - Creates two scatter plots:
-    * Left: Original data with true labels
-    * Right: Data with predicted cluster assignments
-
-    # Returns
-    Returns a composed plot with two subplots showing the original data and clustering results
-    (plot size: 1200×600 pixels)
-
-    # Example
-    ```julia
-    # Run the test and display results
-    plot = run_moons_test()
-    display(plot)
-"""
-function run_moons_test()
-    X, initial_labels = generate_mixed_moons_data()
-    
-    params = SelfTuningParams(
-        15,   
-        true  
-    )
-    
-    predicted_labels, best_C, analysis_info = self_tuning_spectral_clustering(
-        X,
-        2,    
-        params
-    )
-    
-    p1 = scatter(X[1,:], X[2,:],
-        group=initial_labels,
-        title="Original Moons Data",
-        xlabel="X", ylabel="Y",
-        marker=:circle,
-        markersize=3,
-        legend=true,
-        aspect_ratio=:equal,
-        palette=:Set1,
-        seriescolor=:auto
-    )
-    
-    p2 = scatter(X[1,:], X[2,:],
-        group=predicted_labels,
-        title="Clustering Results",
-        xlabel="X", ylabel="Y",
-        marker=:circle,
-        markersize=3,
-        legend=true,
-        aspect_ratio=:equal,
-        palette=:Set1
-    )
-    
-    return plot(p1, p2, layout=(1,2), size=(1200,600))
-end
-
-
-#result = run_mixed_circle_test()
-result = run_moons_test()
