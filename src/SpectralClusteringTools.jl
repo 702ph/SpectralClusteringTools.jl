@@ -48,8 +48,6 @@ export
     # Data generation
     make_sphere,
     generate_mixed_concentric_data,
-    generate_mixed_moons_data,
-    run_mixed_circle_test,
-    run_moons_test
+    generate_mixed_moons_data
 
 end # module
