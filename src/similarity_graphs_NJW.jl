@@ -82,7 +82,9 @@ Constructs a k-nearest neighbor (k-NN) graph, where each data point is connected
   - If two points are mutual k-nearest neighbors, an edge is formed.
   - `W[i, j]` represents the similarity between points `i` and `j`, computed using a Gaussian similarity function:
 
-    ``W[i, j] = \exp\left(-\frac{d_{ij}^2}{\sigma_i \sigma_j}\right)``
+    ```math
+    W[i, j] = \exp\\left(-\frac{d_{ij}^2}{\\sigma_i \\sigma_j}\right)
+    ```
 
   - `d_{ij}` is the Euclidean distance between points `i` and `j`.
   - `σ_i` and `σ_j` are local scaling parameters based on the k-th nearest neighbor distance.
@@ -100,7 +102,7 @@ Constructs a k-nearest neighbor (k-NN) graph, where each data point is connected
     X = rand(2, 10)  # 2D points (each column is a data point)
     k = 3
     W = knn_graph(X, k)
-````
+```
 """
 function knn_graph(X::Matrix{Float64}, k::Int)
     n = size(X, 2)
@@ -155,7 +157,7 @@ Constructs a **mutual k-nearest neighbor (k-NN) graph**, where two data points `
   - `W[i, j] > 0` only if `vi` is in the k-nearest neighbors of `vj` **and** `vj` is in the k-nearest neighbors of `vi`.
   - The edge weight is computed using a Gaussian similarity function with **adaptive local scaling**:
 
-    ``W[i, j] = \exp\left(-\frac{d_{ij}^2}{\sigma_i \sigma_j}\right)``
+    ``W[i, j] = \exp\\left(-\frac{d_{ij}^2}{\\sigma_i \\sigma_j}\right)``
 
   - `d_{ij}` is the Euclidean distance between points `i` and `j`.
   - `σ_i` and `σ_j` are local scaling parameters based on the k-th nearest neighbor distance.
@@ -232,7 +234,7 @@ Constructs a **fully connected graph**, where all data points are connected to e
 - An adjacency matrix `W` of size `(n, n)`, where `n` is the number of data points.
   - `W[i, j]` represents the similarity between points `i` and `j`, computed as:
 
-    ``W[i, j] = \exp\left(-\frac{||X_i - X_j||^2}{2\sigma^2}\right)``
+    ``W[i, j] = \exp\\left(-\frac{||X_i - X_j||^2}{2\\sigma^2}\right)``
 
   - `W[i, j]` is always positive and symmetric (`W[i, j] = W[j, i]`).
   - Larger values of `σ` result in more globally connected graphs, while smaller `σ` emphasizes local neighborhoods.
