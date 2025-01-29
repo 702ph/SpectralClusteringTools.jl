@@ -1,8 +1,28 @@
 """
-2. Compute the normalized Laplacian Lsym = D^(−1/2)LD^(−1/2) = I − D^(-1/2) W D^(-1/2)
-● D is the degree matrix 
-"""
+    compute_normalized_laplacian(W::Matrix{Float64})
 
+Computes the normalized Laplacian matrix `Lsym` using the formula:
+
+    ``Lsym = D^(−1/2)LD^(−1/2) = I − D^(-1/2) W D^(-1/2)``
+
+where ``D`` is the degree matrix.
+
+# Arguments
+- `W`: A symmetric adjacency matrix (weight matrix) of the graph.
+
+# Returns
+- The normalized Laplacian matrix `Lsym`.
+
+# Notes
+- If any node has a degree of zero (isolated vertex), small connections are added to ensure numerical stability.
+- The resulting Laplacian matrix is symmetrized and clamped to the range `[-1, 1]` to maintain stability.
+
+# Example
+```julia
+W = [0.0 1.0 0.5; 1.0 0.0 1.0; 0.5 1.0 0.0]
+Lsym = compute_normalized_laplacian(W)
+```
+"""
 function compute_normalized_laplacian(W::Matrix{Float64})
     # Compute degree matrix D
     d = sum(W, dims=2)[:]  # Get degrees as a vector

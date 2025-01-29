@@ -3,6 +3,7 @@ export compute_ari
 export compute_nmi
 export print_efficiency
 
+
 """
     compute_accuracy(y_true::Vector{Int}, y_pred::Vector{Int})
 
@@ -36,6 +37,7 @@ function compute_accuracy(y_true::Vector{Int}, y_pred::Vector{Int})
 	accuracy = true_count / length(y_true)
 	return accuracy
 end
+
 
 """
     contingency_matrix(y_true::Vector{Int}, y_pred::Vector{Int})
@@ -71,6 +73,7 @@ function contingency_matrix(y_true::Vector{Int}, y_pred::Vector{Int})
     return matrix
 end
 
+
 """
     combinations(n::Int, k::Int)
 
@@ -97,6 +100,7 @@ function combinations(n::Int, k::Int)
         return num / denom
     end
 end
+
 
 """
     compute_ari(y_true::Vector{Int}, y_pred::Vector{Int})
@@ -132,6 +136,7 @@ function compute_ari(y_true::Vector{Int}, y_pred::Vector{Int})
 
     return (actual_index - expected_index) / (max_index - expected_index)
 end
+
 
 """
     compute_nmi(y_true::Vector{Int}, y_pred::Vector{Int})
@@ -174,6 +179,7 @@ function compute_nmi(y_true::Vector{Int}, y_pred::Vector{Int})
 
     return mutual_info / sqrt(h_true * h_pred)
 end
+
 
 """
     print_efficiency(y_true::Vector{Int}, y_pred::Vector{Int})

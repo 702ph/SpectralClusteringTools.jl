@@ -15,6 +15,7 @@ struct GivensRotation
     θ::Float64   # rotation angle
 end
 
+
 """
 compute_local_scaling(X::Matrix{Float64}, K::Int)
 
@@ -49,6 +50,7 @@ function compute_local_scaling(X::Matrix{Float64}, K::Int)
         "neighbors_and_dists" => neighbors_and_dists
     )
 end
+
 
 """
 construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningParams; is_spherical::Bool=false)
@@ -166,6 +168,7 @@ function construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningPa
     
     return A
 end
+
 
 """
 apply_givens_rotation!(X::Matrix{Float64}, G::GivensRotation)
@@ -423,6 +426,7 @@ function analyze_eigengaps(L::Matrix{Float64}, max_C::Int)
     return Z, best_C, analysis_info
 end
 
+
 """
 self_tuning_spectral_clustering(X::Matrix{Float64}, max_C::Int, params::SelfTuningParams; is_spherical::Bool=false)
 
@@ -446,7 +450,6 @@ Returns:
 - `best_C::Int`: The optimal number of clusters.
 - `analysis_info::Dict`: A dictionary containing detailed analysis information, such as the rotation matrix, aligned eigenvectors, and clustering cost.
 """
-
 function self_tuning_spectral_clustering(X::Matrix{Float64}, 
                                        max_C::Int,
                                        params::SelfTuningParams;
