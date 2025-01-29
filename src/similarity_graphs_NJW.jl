@@ -1,3 +1,5 @@
+
+# TODO: Determine where this comment should be placed
 """
 1. Construct a similarity graph. W: weighted adjacency matrix(A Tutorial on Spectral Clustering P7)
 ● According to the reference, there are three ways to do it:
@@ -13,13 +15,32 @@ struct  SpectralClusteringParams
     σ::Float64  # σ (sigma)-->Gaussian similarity
 end
 
-"""
-● (Build) The ε-neighborhood graph 
-●  Connect all points whose pairwise distances are smaller than ε
-●  Considered as an unweighted graph (weight is either 0 or 1)
-●  But since W is weighted in NJW, ε-neighborhood may not be used for it, just for short try, and compare the result
-"""
 
+"""
+    epsilon_neighborhood_graph(X::Matrix{Float64}, ε::Float64)
+
+Constructs an ε-neighborhood graph, where an edge is formed between two points if their Euclidean distance is less than ε.
+
+# Arguments
+- `X`: A matrix where each column represents a data point in a feature space.
+- `ε`: A threshold distance; two points are connected if their Euclidean distance is smaller than `ε`.
+
+# Returns
+- An adjacency matrix `W` of size `(n, n)`, where `n` is the number of data points.
+  - `W[i, j] = 1.0` if `||X[:, i] - X[:, j]||_2 < ε`, otherwise `W[i, j] = 0.0`.
+  - The matrix `W` is symmetric.
+
+# Notes
+- The graph is unweighted (binary adjacency matrix).
+- This method is mainly used for comparison, as NJW spectral clustering typically uses a weighted similarity graph.
+
+# Example
+```julia
+X = rand(2, 5)  # 2D points (each column is a data point)
+ε = 0.5
+W = epsilon_neighborhood_graph(X, ε)
+```
+"""
 function epsilon_neighborhood_graph(X::Matrix{Float64}, ε::Float64)
     # size(X,1)--> rows(feature) ; size(X,2)-->columns(datapoints)
     n = size(X, 2)
@@ -39,18 +60,50 @@ function epsilon_neighborhood_graph(X::Matrix{Float64}, ε::Float64)
 end
 
 
+# TODO: Determine where this comment should be placed
 """
 ● (Construct) k-nearest neighbor graphs
 ● Each vertex is connected to its k nearest neighbors (Connect vertex vi with vertex vj if vj is among the k-nearest neighbors of vi)
 ● Two ways: the k-nearest neighbor graph && mutual k-nearest neighbor graph
 """
 
-"""
-● k-nearest neighbor graph
-● Ignore the directions of the edges
-● Connect vi and vj with an undirected edge if vi is among the k-nearest neighbors of vj, vice versa
-"""
 
+"""
+    knn_graph(X::Matrix{Float64}, k::Int)
+
+Constructs a k-nearest neighbor (k-NN) graph, where each data point is connected to its `k` nearest neighbors. The graph is **undirected**, meaning that if `vi` is among the `k` nearest neighbors of `vj`, then `vj` is also connected to `vi`.
+
+# Arguments
+- `X`: A matrix where each column represents a data point in a feature space.
+- `k`: The number of nearest neighbors to consider for each data point.
+
+# Returns
+- An adjacency matrix `W` of size `(n, n)`, where `n` is the number of data points.
+  - If two points are mutual k-nearest neighbors, an edge is formed.
+  - `W[i, j]` represents the similarity between points `i` and `j`, computed using a Gaussian similarity function:
+
+    ```math
+    W[i, j] = \exp\\left(-\frac{d_{ij}^2}{\\sigma_i \\sigma_j}\right)
+    ```
+
+  - `d_{ij}` is the Euclidean distance between points `i` and `j`.
+  - `σ_i` and `σ_j` are local scaling parameters based on the k-th nearest neighbor distance.
+  - The matrix `W` is symmetric.
+
+# Notes
+- A **KDTree** is used for efficient nearest neighbor search.
+- The graph is **undirected**, meaning that if `vi` is in the k-nearest neighbors of `vj`, then an edge is also created from `vj` to `vi`.
+- **Local scaling** is applied using the k-th nearest neighbor distance to prevent numerical instability.
+- The **median of the k-th nearest neighbor distances** is used to avoid division by very small values.
+
+# Example
+```julia
+    using NearestNeighbors  # Ensure NearestNeighbors.jl is installed for KDTree
+    X = rand(2, 10)  # 2D points (each column is a data point)
+    k = 3
+    W = knn_graph(X, k)
+```
+"""
 function knn_graph(X::Matrix{Float64}, k::Int)
     n = size(X, 2)
     # KDTree: Space-partitioning data structure for organizing points in a k-dimensional space
@@ -89,13 +142,40 @@ function knn_graph(X::Matrix{Float64}, k::Int)
     return W
 end
 
-"""
-● (Construct) Mutual k-nearest neighbor graph
-● Use Local scaling as mentioned in Self Tuning?
-● Vertices are connected only if they are among each other's k nearest neighbors
-● Connect vertices vi and vj if both vi is among the k-nearest neighbors of vj and vj is among the k-nearest neighbors of vi
-"""
 
+"""
+    mutual_knn_graph(X::Matrix{Float64}, k::Int)
+
+Constructs a **mutual k-nearest neighbor (k-NN) graph**, where two data points `vi` and `vj` are connected **only if they are among each other's k nearest neighbors**. The edge weights are computed using a **Gaussian similarity function with local scaling**.
+
+# Arguments
+- `X`: A matrix where each column represents a data point in a feature space.
+- `k`: The number of nearest neighbors to consider for each data point.
+
+# Returns
+- An adjacency matrix `W` of size `(n, n)`, where `n` is the number of data points.
+  - `W[i, j] > 0` only if `vi` is in the k-nearest neighbors of `vj` **and** `vj` is in the k-nearest neighbors of `vi`.
+  - The edge weight is computed using a Gaussian similarity function with **adaptive local scaling**:
+
+    ``W[i, j] = \exp\\left(-\frac{d_{ij}^2}{\\sigma_i \\sigma_j}\right)``
+
+  - `d_{ij}` is the Euclidean distance between points `i` and `j`.
+  - `σ_i` and `σ_j` are local scaling parameters based on the k-th nearest neighbor distance.
+  - The matrix `W` is symmetric.
+
+# Notes
+- **Mutual k-NN condition**: Unlike standard k-NN graphs, an edge is only formed if `vi` and `vj` are in each other's k-nearest neighbor lists.
+- **Local scaling**: The similarity measure adapts based on the k-th nearest neighbor distance of each point (`σ_i` and `σ_j`).
+- **KDTree** is used for efficient nearest neighbor search.
+
+# Example
+```julia
+    using NearestNeighbors  # Ensure NearestNeighbors.jl is installed for KDTree
+    X = rand(2, 10)  # 2D points (each column is a data point)
+    k = 3
+    W = mutual_knn_graph(X, k)
+````
+"""
 function mutual_knn_graph(X::Matrix{Float64}, k::Int)
     n = size(X, 2)
     tree = KDTree(X)
@@ -138,6 +218,39 @@ end
 ● Connect all points with positive similarity with each other
 ● Weight all edge by sij
 ● Only useful if the similarity function itself models local neighbors， example: Gaussian
+"""
+
+
+"""
+    fully_connected_graph(X::Matrix{Float64}, σ::Float64)
+
+Constructs a **fully connected graph**, where all data points are connected to each other with an edge. The edge weights are determined by a similarity function, such as a **Gaussian kernel**.
+
+# Arguments
+- `X`: A matrix where each column represents a data point in a feature space.
+- `σ`: A scaling parameter for the Gaussian similarity function.
+
+# Returns
+- An adjacency matrix `W` of size `(n, n)`, where `n` is the number of data points.
+  - `W[i, j]` represents the similarity between points `i` and `j`, computed as:
+
+    ``W[i, j] = \exp\\left(-\frac{||X_i - X_j||^2}{2\\sigma^2}\right)``
+
+  - `W[i, j]` is always positive and symmetric (`W[i, j] = W[j, i]`).
+  - Larger values of `σ` result in more globally connected graphs, while smaller `σ` emphasizes local neighborhoods.
+
+# Notes
+- **All points are connected**: Unlike k-NN or ε-neighborhood graphs, this graph is fully connected.
+- **Edge weights depend on similarity**: The similarity function should naturally model local neighborhoods (e.g., the Gaussian kernel).
+- **Gaussian kernel ensures smooth transitions**: The similarity decreases exponentially as the distance increases.
+- **No thresholding**: Any two points with positive similarity are connected.
+
+# Example
+```julia
+    X = rand(2, 10)  # 2D points (each column is a data point)
+    σ = 1.0
+    W = fully_connected_graph(X, σ)
+```
 """
 function fully_connected_graph(X::Matrix{Float64}, σ::Float64)
     n = size(X, 2)

@@ -3,6 +3,7 @@ export make_lines_2d
 export make_spirals_2d
 export make_blobs_2d
 
+
 """
     make_circles(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
 
@@ -54,6 +55,7 @@ function make_circles(num_classes::Int, num_points_per_class::Int, noise::Float6
     return normalized_points, labels
 end
 
+
 """
     make_lines_2d(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
 
@@ -93,6 +95,7 @@ function make_lines_2d(num_classes::Int, num_points_per_class::Int, noise::Float
     return points, labels
 end
 
+
 """
     make_spirals_2d(num_points_per_class::Int, noise::Float64=0.0)
 
@@ -131,6 +134,7 @@ function make_spirals_2d(num_points_per_class::Int, noise::Float64=0.0)
 
     return points, labels
 end
+
 
 """
     make_blobs_2d(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)

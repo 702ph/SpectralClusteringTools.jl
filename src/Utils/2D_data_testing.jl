@@ -1,6 +1,8 @@
 using .SpectralClusteringTools
 using Plots
 export generate_mixed_concentric_data, generate_mixed_moons_data
+
+
 """
 generate_mixed_concentric_data()
 
@@ -48,32 +50,33 @@ function generate_mixed_concentric_data()
     return Matrix(X'), labels 
 end
 
+
 """
-generate_mixed_moons_data(n_samples::Int=300, noise::Float64=0.05)
+    generate_mixed_moons_data(n_samples=300, noise=0.05)
 
-    Generate two interleaved moon-shaped datasets with overlapping regions. This function is primarily used for creating synthetic data to test clustering algorithms.
+Generate two interleaved moon-shaped datasets with overlapping regions. This function is primarily used for creating synthetic data to test clustering algorithms.
 
-    # Arguments
-    - `n_samples::Int=300`: Number of base samples for each moon shape
-    - `noise::Float64=0.05`: Standard deviation of Gaussian noise added to the data points
+# Arguments
+- `n_samples` (`Int=300`): Number of base samples for each moon shape
+- `noise` (`Float64=0.05`): Standard deviation of Gaussian noise added to the data points
 
-    # Returns
-    Returns a tuple `(X, labels)`:
-    - `X`: 2×N matrix where N = 2 * (n_samples + n_samples÷3), each column represents a 2D data point
-    - `labels`: Vector of length N containing class labels (1 or 2) for each point
+# Returns
+Returns a tuple `(X, labels)`:
+- `X`: `2×N` matrix where `N = 2 * (n_samples + n_samples÷3)`, each column represents a 2D data point
+- `labels`: Vector of length `N` containing class labels (`1` or `2`) for each point
 
-    # Implementation Details
-    1. Generates base data points for two moon shapes
-    2. Adds Gaussian noise to each data point
-    3. Generates additional mixing points (n_samples÷3 points) for each class
-    4. Mixing points have higher noise (2x the base noise)
+# Implementation Details
+1. Generates base data points for two moon shapes.
+2. Adds Gaussian noise to each data point.
+3. Generates additional mixing points (`n_samples÷3` points) for each class.
+4. Mixing points have higher noise (`2x` the base noise).
 
-    # Example
-    ```julia
-    X, labels = generate_mixed_moons_data(500, 0.1)
-    scatter(X[1,:], X[2,:], group=labels, title="Mixed Moons Dataset")
+# Example
+```julia
+X, labels = generate_mixed_moons_data(500, 0.1)
+scatter(X[1,:], X[2,:], group=labels, title="Mixed Moons Dataset")
+```
 """
-
 function generate_mixed_moons_data(n_samples::Int=300, noise::Float64=0.05)
     
     t = range(0, π, length=n_samples)

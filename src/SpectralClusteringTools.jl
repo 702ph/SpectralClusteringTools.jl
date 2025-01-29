@@ -6,7 +6,7 @@ module SpectralClusteringTools
 
 # 1. Import packages
 using LinearAlgebra: norm, eigvals, eigvecs, Diagonal, diag, Symmetric, eigen, I, dot 
-using Statistics: mean, std, median
+using Statistics: mean, std, median, quantile
 using NearestNeighbors: KDTree, knn
 using Clustering: kmeans
 using Plots
@@ -21,6 +21,9 @@ include("similarity_graphs_NJW.jl")
 include("affinity_matrix_NJW.jl")
 include("spectral_clustering_NJW.jl")
 
+# Normalized cuts and segmentation
+include("normalized_cuts.jl")
+
 # Basic utilities
 include("Utils/DataSets.jl")
 include("Utils/2D_data_testing.jl")
@@ -32,6 +35,7 @@ export
     # Parameter types
     SpectralClusteringParams,
     SelfTuningParams,  
+    NormalizedCutsParams, 
     
     # NJW spectral clustering
     construct_similarity_graph,
@@ -44,6 +48,13 @@ export
     # Self-tuning spectral clustering
     construct_self_tuning_affinity,
     self_tuning_spectral_clustering,
+
+    # Normalized cuts and segmentation
+    normalized_cuts_segmentation,
+    recursive_ncut,
+    compute_ncut_value,
+    compute_image_affinity,
+    compute_partition_cost,
 
     # Data generation
     make_sphere,

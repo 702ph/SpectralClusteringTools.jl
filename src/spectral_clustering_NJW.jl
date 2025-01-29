@@ -2,6 +2,53 @@
 Main Function for NJW spectral Clustering
 """
 
+"""
+    spectral_clustering(X::Matrix{Float64}, k::Int, params::SpectralClusteringParams)
+
+Performs **spectral clustering** on a given dataset using a similarity graph and normalized Laplacian eigenvectors.
+
+# Arguments
+- `X`: A matrix where each column represents a data point in a feature space.
+- `k`: The number of clusters to form.
+- `params`: A `SpectralClusteringParams` struct containing parameters for graph construction and similarity computation.
+
+# Returns
+- A vector of cluster assignments, where each index corresponds to a data point in `X`.
+
+# Steps
+1. **Construct the similarity graph `W`**:
+   - If `params.graph_type == :ε`, use an **ε-neighborhood graph** (`epsilon_neighborhood_graph`).
+   - If `params.graph_type == :knn`, use a **k-nearest neighbor (k-NN) graph** (`knn_graph`).
+   - If `params.graph_type == :mutual_knn`, use a **mutual k-NN graph** (`mutual_knn_graph`).
+   - Otherwise, construct a **fully connected graph** (`fully_connected_graph`).
+
+2. **Compute the normalized Laplacian `Lsym`**:
+   - `Lsym = D^(-1/2) * (D - W) * D^(-1/2)`, where `D` is the degree matrix.
+
+3. **Compute the top-k eigenvectors of `Lsym`**:
+   - Solve for eigenvalues and eigenvectors: `eigvals_L, eigvecs_L = eigen(Symmetric(L))`
+   - Extract the **k eigenvectors** corresponding to the **largest k eigenvalues**.
+
+4. **Normalize rows of the eigenvector matrix**:
+   - Normalize each row of `U` to unit length to obtain `T`.
+
+5. **Cluster the normalized rows using k-means**:
+   - Perform k-means clustering (`kmeans(T', k)`) with multiple random initializations.
+   - Select the best clustering result based on **minimal total cost**.
+
+# Notes
+- The function validates the parameters to ensure `k > 0`, `σ > 0`, and `k for k-NN > 0`.
+- If the similarity matrix `W` is all zeros, an error is raised.
+- Uses **k-means++ initialization** for better clustering stability.
+- Catches unexpected errors and logs warnings before throwing an `ArgumentError`.
+
+# Example
+```julia
+    X = rand(2, 100)  # 2D points (each column is a data point)
+    params = SpectralClusteringParams(:knn, k=5, σ=1.0)  # Example params
+    assignments = spectral_clustering(X, 3, params)
+```
+"""
 function spectral_clustering(X::Matrix{Float64}, 
     k::Int, 
     params::SpectralClusteringParams)
