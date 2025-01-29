@@ -48,6 +48,8 @@ function NormalizedCutsParams(;
     
     NormalizedCutsParams(σ_spatial, σ_feature, min_ncut, max_depth, k_nearest)
 end
+
+
 """
     compute_image_affinity(spatial_coords::Matrix{Float64}, 
                          features::Matrix{Float64}, 
@@ -94,6 +96,7 @@ function compute_image_affinity(spatial_coords::Matrix{Float64},
     return W
 end
 
+
 """
     compute_ncut_value(W::Matrix{Float64}, partition::Vector{Int})
 
@@ -119,6 +122,7 @@ function compute_ncut_value(W::Matrix{Float64}, partition::Vector{Int})
     
     return cut/assoc_A + cut/assoc_B
 end
+
 
 """
     compute_partition_cost(V::Matrix{Float64}, partition::Vector{Int})
@@ -149,6 +153,7 @@ function compute_partition_cost(V::Matrix{Float64},
     
     return cost
 end
+
 
 """
     recursive_ncut(W::Matrix{Float64}, params::NormalizedCutsParams, depth::Int=0)
@@ -223,6 +228,7 @@ function recursive_ncut(W::Matrix{Float64},
     
     return best_partition
 end
+
 
 """
     normalized_cuts_segmentation(spatial_coords::Matrix{Float64}, 
