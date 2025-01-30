@@ -484,6 +484,27 @@ end
         @test all(assignments .<= max_C)
     end
 
+    @testset "is_spherical" begin
+        num_classes = 3
+        num_points_per_class = 10
+        noise = 0.1
+        adjust_scale = false
+        X, _ = make_spheres(num_classes, num_points_per_class, noise, adjust_scale)
+        X_norm = (X .- mean(X, dims=1)) ./ std(X, dims=1)
+        X_clustering = Matrix(X_norm')
+    
+        max_C = 3
+        params = SelfTuningParams(7, true)
+    
+        assignments, best_C, analysis_info = self_tuning_spectral_clustering(X_clustering, max_C, params, is_spherical=true)
+    
+        @test size(assignments, 1) == num_classes * num_points_per_class
+        @test length(assignments) == size(X_clustering, 2)
+        @test all(best_C .<= max_C)
+        @test all(isfinite.(assignments))
+        @test all(assignments .<= max_C)
+    end
+
     @testset "Error handling" begin
         @testset "Invalid parameters" begin
             num_classes = 2
