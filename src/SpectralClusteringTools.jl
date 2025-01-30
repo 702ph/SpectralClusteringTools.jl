@@ -26,6 +26,8 @@ include("normalized_cuts.jl")
 
 # Basic utilities
 include("Utils/DataSets.jl")
+include("Utils/DataSets_2D.jl")
+include("Utils/compare_results.jl")
 include("Utils/2D_data_testing.jl")
 
 
@@ -59,6 +61,10 @@ export
     # Data generation
     make_sphere,
     generate_mixed_concentric_data,
-    generate_mixed_moons_data
+    generate_mixed_moons_data,
+    make_circles,
+    make_lines_2d,
+    make_spirals_2d,
+    make_blobs_2d
 
 end # module
