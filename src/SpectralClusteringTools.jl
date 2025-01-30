@@ -56,7 +56,6 @@ export
     recursive_ncut,
     compute_ncut_value,
     compute_image_affinity,
-    compute_partition_cost,
 
     # Data generation
     make_sphere,

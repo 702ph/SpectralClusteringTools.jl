@@ -9,49 +9,6 @@ struct SelfTuningParams
 end
 
 
-struct GivensRotation
-    i::Int       # row index
-    j::Int       # column index
-    θ::Float64   # rotation angle
-end
-
-
-"""
-compute_local_scaling(X::Matrix{Float64}, K::Int)
-
-Compute the local scaling parameters σᵢ for each point in the input matrix X.
-
-The local scaling parameter σᵢ is defined as the distance from point sᵢ to its Kth nearest neighbor.
-
-Parameters:
-- `X::Matrix{Float64}`: The input data matrix.
-- `K::Int`: The number of nearest neighbors to consider for the local scaling computation.
-
-Returns:
-- `σ::Vector{Float64}`: The vector of local scaling parameters, one for each data point.
-- `analysis_info::Dict`: A dictionary containing additional information used in the local scaling computation, such as the KD-tree, distances to neighbors, and neighbor indices.
-"""
-function compute_local_scaling(X::Matrix{Float64}, K::Int)
-    n = size(X, 2)
-    tree = KDTree(X)
-    #σ = zeros(Float64, n)
-
-    neighbors_and_dists = [knn(tree, X[:,i], K + 1) for i in 1:n]
-    distances = [dists[2:end] for (_, dists) in neighbors_and_dists]
-    σ = [dists[end] for dists in distances]
-    
-    eps_stable = 1e-10
-    median_σ = median(σ)
-    σ = [max(s, eps_stable * median_σ) for s in σ]
-
-    return σ, Dict(
-        "tree" => tree,
-        "distances" => distances,
-        "neighbors_and_dists" => neighbors_and_dists
-    )
-end
-
-
 """
 construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningParams; is_spherical::Bool=false)
 
@@ -167,30 +124,6 @@ function construct_self_tuning_affinity(X::Matrix{Float64}, params::SelfTuningPa
     end
     
     return A
-end
-
-
-"""
-apply_givens_rotation!(X::Matrix{Float64}, G::GivensRotation)
-
-Apply a Givens rotation to the input matrix X.
-
-A Givens rotation is a plane rotation that operates on a pair of columns in a matrix. This function updates the matrix X in-place by applying the specified Givens rotation.
-
-Parameters:
-- `X::Matrix{Float64}`: The input matrix to be rotated.
-- `G::GivensRotation`: A struct containing the parameters of the Givens rotation to be applied, including the row indices `i` and `j`, and the rotation angle `θ`.
-"""
-function apply_givens_rotation!(X::Matrix{Float64}, G::GivensRotation)
-    c = cos(G.θ)
-    s = sin(G.θ)
-    
-    for k in 1:size(X, 2)
-        xi = X[G.i, k]
-        xj = X[G.j, k]
-        X[G.i, k] = c * xi - s * xj
-        X[G.j, k] = s * xi + c * xj
-    end
 end
 
 
