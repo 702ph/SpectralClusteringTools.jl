@@ -1,12 +1,21 @@
 
-# TODO: Determine where this comment should be placed
 """
-1. Construct a similarity graph. W: weighted adjacency matrix(A Tutorial on Spectral Clustering P7)
-● According to the reference, there are three ways to do it:
-    (1) The ε-neighborhood graph
-    (2) k-nearest neighbor graphs
-    (3) The fully connected graph
-● Parameters for Spectral clustering
+    struct SpectralClusteringParams
+
+A structure for defining parameters for Spectral Clustering.
+
+# Fields
+- `graph_type::Symbol` : The method used to construct the similarity graph (`:epsilon`, `:knn`, `:fully_connected`)
+- `k::Int` : Number of nearest neighbors (used when `:knn` is selected)
+- `ε::Float64` : Epsilon neighborhood (used when `:epsilon` is selected)
+- `σ::Float64` : Parameter for the Gaussian similarity function
+
+# Methods for constructing the similarity graph
+1. `:epsilon` - ε-neighborhood graph
+2. `:knn` - k-nearest neighbor graph
+3. `:fully_connected` - Fully connected graph
+
+Reference: "A Tutorial on Spectral Clustering" (P7)
 """
 struct  SpectralClusteringParams
     graph_type::Symbol # choose which method to build the similarity graph
