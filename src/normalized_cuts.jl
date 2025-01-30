@@ -4,7 +4,7 @@ Combined with insights from Multiclass Spectral Clustering
 """
 
 export NormalizedCutsParams, compute_ncut_value, compute_image_affinity
-export recursive_ncut, normalized_cuts_segmentation, compute_partition_cost
+export recursive_ncut, normalized_cuts_segmentation
 
 """
     NormalizedCutsParams
@@ -121,37 +121,6 @@ function compute_ncut_value(W::Matrix{Float64}, partition::Vector{Int})
     assoc_B = sum(sum(W[i,:]) for i in B)
     
     return cut/assoc_A + cut/assoc_B
-end
-
-
-"""
-    compute_partition_cost(V::Matrix{Float64}, partition::Vector{Int})
-
-Computes the partition cost using the second smallest eigenvector.
-
-# Arguments
-- `V::Matrix{Float64}`: Matrix containing eigenvectors
-- `partition::Vector{Int}`: Current partition assignment
-- `R::Matrix{Float64}`: Optional rotation matrix for multiclass case
-
-# Returns
-- `cost::Float64`: Partition cost
-"""
-function compute_partition_cost(V::Matrix{Float64}, 
-                              partition::Vector{Int},
-                              R::Matrix{Float64}=Matrix{Float64}(I, size(V,2), size(V,2)))
-    # Transform points if rotation matrix provided
-    points = V * R
-    
-    # Compute centroids
-    c1 = mean(points[partition .== 1, :], dims=1)
-    c2 = mean(points[partition .== 2, :], dims=1)
-    
-    # Compute within-cluster distances
-    cost = sum(norm(points[i,:] - (partition[i] == 1 ? c1 : c2))^2 
-              for i in 1:size(points,1))
-    
-    return cost
 end
 
 
