@@ -153,4 +153,7 @@ With this streamlined approach, users can quickly experiment
 with spectral clustering on different dataset types with minimal effort!
 
 
+## Contributors
+[![Contributors](https://contrib.rocks/image?repo=702ph/SpectralClusteringTools.jl)](https://github.com/702ph/SpectralClusteringTools.jl/graphs/contributors)
+
 
