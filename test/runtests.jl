@@ -613,7 +613,7 @@ end
     @testset "normalized_cuts_segmentation" begin
         spatial_coords = [0.0 0.0; 1.0 1.0; 2.0 2.0]
         features = [0.5 1.0; 1.5 2.0; 2.5 3.0]
-        params = NormalizedCutsParams(1.0, 1.0, 5, 10, 2)
+        params = NormalizedCutsParams(1.0, 1.0, 5.0, 10, 2)
 
         segments, W = normalized_cuts_segmentation(spatial_coords, features, params)
         
