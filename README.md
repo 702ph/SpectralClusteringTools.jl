@@ -20,6 +20,14 @@ A package for creating test data and providing functions to facilitate clusterin
 - Utilities for visualizing clustering results and data distributions.
 
 
+## Prerequisites
+
+| Prerequisite | Version | Installation Guide | Required |
+|--------------|---------|--------------------|----------|
+| Julia       | 1.10    | [![Julia](https://img.shields.io/badge/Julia-v1.10-blue)](https://julialang.org/downloads/) | ✅ |
+
+
+
 ## Installation
 This guide will help you set up and install the SpectralClusteringTools.jl package, which is developed as part of a university project for Julia version 1.10. Follow the steps below to ensure a successful installation.
 
@@ -29,8 +37,6 @@ This guide will help you set up and install the SpectralClusteringTools.jl packa
 ```
 git clone "https://github.com/702ph/SpectralClusteringTools.jl"
 cd SpectralClusteringTools.jl
-
-
 ```
 - The first command downloads the repository from GitHub to your local machine.
 - The second command changes your current directory to the repository folder, where the package is located.
@@ -47,19 +53,19 @@ This starts the Julia REPL (Read-Eval-Print Loop), an interactive environment wh
 Once the Julia REPL has started, you should perform the necessary steps to use the package. Follow these steps
 
 1. Inside the Julia REPL, import the package manager by typing:
-```
+```julia
 using Pkg
 ```
 
 
 2. Activate the local environment for the project by running:
-```
+```julia
 Pkg.activate(".")
 ```
 - The `activate()` command tells Julia to use the package environment defined in the current directory (`.` refers to the current folder where the project was cloned).
 
 3. Install all dependencies specified in the project's Project.toml file:
-```
+```julia
 Pkg.instantiate()
 ```
 The `instantiate()` command ensures all required packages for the project are downloaded and installed.
@@ -145,5 +151,6 @@ For more detailed explanations and advanced usage,
 please refer to the [documentation](https://702ph.github.io/SpectralClusteringTools.jl/stable/). 
 With this streamlined approach, users can quickly experiment 
 with spectral clustering on different dataset types with minimal effort!
+
 
 
