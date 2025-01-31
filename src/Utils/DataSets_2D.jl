@@ -1,5 +1,4 @@
 export make_circles
-export make_lines_2d
 export make_spirals_2d
 export make_blobs_2d
 
@@ -53,46 +52,6 @@ function make_circles(num_classes::Int, num_points_per_class::Int, noise::Float6
 
     normalized_points = (points .- minimum(points)) ./ (maximum(points) - minimum(points))
     return normalized_points, labels
-end
-
-
-"""
-    make_lines_2d(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
-
-Generates a dataset of points distributed along straight lines in 2D.
-Each line corresponds to a class.
-
-# Arguments
-- `num_classes`: Number of lines (classes) to generate.
-- `num_points_per_class`: Number of points per class.
-- `noise`: Maximum noise applied to each point.
-
-# Returns
-- A tuple of `(points, labels)`, where `points` is a matrix of 2D points, and `labels` indicates class membership.
-
-# Example
-`points, labels = make_lines_2d(5, 500, 0.3)`
-"""
-function make_lines_2d(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
-    points = Matrix{Float64}(undef, 0, 2)
-    labels = Vector{Int}(undef, 0)
-
-    for class in 1:num_classes
-        # Generate x coordinates
-        x = rand(num_points_per_class)
-
-        # y coordinate is fixed for each class, with added noise
-        y = [class for _ in 1:num_points_per_class]
-        noise_values = noise .* (2 .* rand(num_points_per_class) .- 1)
-        y = y .+ noise_values
-
-        # Combine x and y
-        points_for_class = hcat(x, y)
-        points = vcat(points, points_for_class)
-        labels = vcat(labels, fill(class, num_points_per_class))
-    end
-
-    return points, labels
 end
 
 
