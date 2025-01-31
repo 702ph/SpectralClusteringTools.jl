@@ -2,6 +2,8 @@ export compute_accuracy
 export compute_ari
 export compute_nmi
 export print_efficiency
+export contingency_matrix
+export combinations
 
 
 """
