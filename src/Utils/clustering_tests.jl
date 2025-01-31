@@ -3,8 +3,6 @@ using Plots
 using LinearAlgebra: norm
 using .SpectralClusteringTools
 
-export run_clustering_example
-
 const TEST_SEED = 42
 const SAVE_DIR = "Utils/results"
 
