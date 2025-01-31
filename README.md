@@ -6,7 +6,10 @@
 [![Coverage](https://codecov.io/gh/702ph/SpectralClusteringTools.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/702ph/SpectralClusteringTools.jl)
 
 
+This repository is associated with a collaborative project at Technische Universität Berlin for the course [Julia Programming for Machine Learning](https://adrianhill.de/julia-ml-course/) in the Winter Semester 2024/25.
 
+
+## Overview
 *Tools for Spectral Clustering.*
 
 A package for creating test data and providing functions to facilitate clustering analysis. The implemented methods follow the approach outlined in A Tutorial on Spectral Clustering by Ulrike von Luxburg (2007). Additionally, the self-tuning spectral clustering technique is based on the methodology described in Self-Tuning Spectral Clustering by Zelnik-Manor & Perona (2004). This allows users to experiment with different clustering scenarios and effectively visualize results.
