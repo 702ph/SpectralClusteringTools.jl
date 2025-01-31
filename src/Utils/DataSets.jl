@@ -79,9 +79,12 @@ Each line corresponds to a class.
 `points, labels = make_lines(5, 500, 0.3)`
 """	
 function make_lines(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
+    num_classes > 0 || throw(ArgumentError("Number of classes must be greater than 0"))
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
+
 	points = Matrix{Float64}(undef, 0, 3)
 	labels = Vector{Int}(undef, 0)
-
+	
 	for class in 1:num_classes
         # Generate points
 		x = rand(num_points_per_class)
@@ -122,6 +125,8 @@ Each spiral corresponds to a class.
 `points, labels = make_spirals(500, 1.0)`
 """	
 function make_spirals(num_points_per_class::Int, noise::Float64=0.0)
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
+
 	points = Matrix{Float64}(undef, 0, 3)
 	labels = Vector{Int}(undef, 0)
 
@@ -168,6 +173,9 @@ Each blob corresponds to a class.
 `points, labels = make_blobs(5, 500, 0.5)`
 """	
 function make_blobs(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
+    num_classes > 0 || throw(ArgumentError("Number of classes must be greater than 0"))
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
+	
 	points = Matrix{Float64}(undef, 0, 3)
 	labels = Vector{Int}(undef, 0)
 
