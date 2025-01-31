@@ -560,3 +560,65 @@ end
         end
     end
 end
+
+@testset "normalized_cuts.jl" begin
+    @testset "NormalizedCutsParams" begin
+        params = NormalizedCutsParams(σ_spatial = 1.0, σ_feature = 1.0)
+        @test params.σ_spatial == 1.0
+        @test params.σ_feature == 1.0
+        @test params.min_ncut == 0.1
+        @test params.max_depth == 10
+        @test params.k_nearest == 10
+    
+        # Teste fehlerhafte Eingaben
+        @test_throws ArgumentError NormalizedCutsParams(-1.0, 1.0, 0.1, 5, 2)
+        @test_throws ArgumentError NormalizedCutsParams(1.0, -1.0, 0.1, 5, 2)
+        @test_throws ArgumentError NormalizedCutsParams(1.0, 1.0, -0.1, 5, 2)
+        @test_throws ArgumentError NormalizedCutsParams(1.0, 1.0, 0.1, -5, 2)
+        @test_throws ArgumentError NormalizedCutsParams(1.0, 1.0, 0.1, 5, -2)
+    end
+
+    @testset "compute_image_affinity" begin
+        spatial_coords = [0.0 0.0; 1.0 1.0; 2.0 2.0]
+        features = [0.5 1.0; 1.5 2.0; 2.5 3.0]
+        
+        params = NormalizedCutsParams(1.0, 1.0, 0.1, 10, 2)
+        W = compute_image_affinity(spatial_coords, features, params)
+    
+        @test size(W) == (3,3)
+        @test W[1,2] > 0
+        @test W[1,3] == 0 
+    end
+
+    @testset "compute_ncut_value" begin
+        W = [0.0 0.5 0.0; 0.5 0.0 0.5; 0.0 0.5 0.0]
+        partition = [2, 1, 1]
+        
+        ncut = compute_ncut_value(W, partition)
+        
+        @test ncut > 1
+        @test ncut < 2
+    end
+    
+    @testset "recursive_ncut" begin
+        W = [0.0 0.5 0.1; 0.5 0.0 0.5; 0.1 0.5 0.0]
+        params = NormalizedCutsParams(1.0, 1.0, 0.05, 2, 10)
+        
+        partition = recursive_ncut(W, params)
+        
+        @test length(partition) == size(W,1)
+        @test all(x -> x in [1,2], partition)
+    end
+
+    @testset "normalized_cuts_segmentation" begin
+        spatial_coords = [0.0 0.0; 1.0 1.0; 2.0 2.0]
+        features = [0.5 1.0; 1.5 2.0; 2.5 3.0]
+        params = NormalizedCutsParams(1.0, 1.0, 5.0, 10, 2)
+
+        segments, W = normalized_cuts_segmentation(spatial_coords, features, params)
+        
+        @test length(segments) == size(spatial_coords,1)
+        @test size(W) == (3,3)
+        @test all(x -> x in [1,2,3], segments)
+    end
+end
