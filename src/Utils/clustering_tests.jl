@@ -6,7 +6,7 @@ using .SpectralClusteringTools
 export run_clustering_example
 
 const TEST_SEED = 42
-const SAVE_DIR = "Utils/results"
+const SAVE_DIR = "../src/Utils/results"
 
 # reopen
 if !isdir(SAVE_DIR)
