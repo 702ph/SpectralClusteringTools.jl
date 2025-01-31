@@ -6,11 +6,11 @@ using .SpectralClusteringTools
 export run_clustering_example
 
 const TEST_SEED = 42
-#const SAVE_DIR = "Utils/results"
+const SAVE_DIR = "Utils/results"
 
-# if !isdir(SAVE_DIR)
-#     mkdir(SAVE_DIR)
-# end
+if !isdir(SAVE_DIR)
+    mkdir(SAVE_DIR)
+end
 
 function run_all_shape_tests()
     Random.seed!(TEST_SEED)
@@ -135,8 +135,8 @@ function run_moons_test()
     clustering_plot = plot_clustering_comparison(X, njw_results, predicted_labels, nc_results, "Moons")
     affinity_plot = plot_affinity_heatmap(W)
     
-    #savefig(clustering_plot, joinpath(SAVE_DIR, "Moons.png"))
-    #savefig(affinity_plot, joinpath(SAVE_DIR, "moons_affinity.png"))
+    savefig(clustering_plot, joinpath(SAVE_DIR, "Moons.png"))
+    savefig(affinity_plot, joinpath(SAVE_DIR, "moons_affinity.png"))
     
     # Print performance metrics
     print_efficiency(initial_labels, njw_results)
@@ -177,8 +177,8 @@ function run_spirals_clustering_test()
     clustering_plot = plot_clustering_comparison(X, njw_results, st_results, nc_results, "Spirals")
     affinity_plot = plot_affinity_heatmap(W)
 
-    #savefig(clustering_plot, joinpath(SAVE_DIR, "Spirals.png"))
-    #savefig(affinity_plot, joinpath(SAVE_DIR, "spirals_affinity.png"))
+    savefig(clustering_plot, joinpath(SAVE_DIR, "Spirals.png"))
+    savefig(affinity_plot, joinpath(SAVE_DIR, "spirals_affinity.png"))
     
     # Print analysis results
     println("\nSpirals Clustering Analysis Summary:")
@@ -224,8 +224,8 @@ function run_blobs_test()
     clustering_plot = plot_clustering_comparison(X, njw_results, st_results, nc_results, "Blobs")
     affinity_plot = plot_affinity_heatmap(W)
 
-    #savefig(clustering_plot, joinpath(SAVE_DIR, "Blobs.png"))
-    #savefig(affinity_plot, joinpath(SAVE_DIR, "blobs_affinity.png"))
+    savefig(clustering_plot, joinpath(SAVE_DIR, "Blobs.png"))
+    savefig(affinity_plot, joinpath(SAVE_DIR, "blobs_affinity.png"))
     
     # Print analysis results
     println("\nBlobs Clustering Analysis Summary:")
@@ -267,8 +267,8 @@ function run_circles_test()
     clustering_plot = plot_clustering_comparison(X, njw_results, st_results, nc_results, "Cirlcles")
     affinity_plot = plot_affinity_heatmap(W)
 
-    #savefig(clustering_plot, joinpath(SAVE_DIR, "Circles.png"))
-    #savefig(affinity_plot, joinpath(SAVE_DIR, "circles_affinity.png"))
+    savefig(clustering_plot, joinpath(SAVE_DIR, "Circles.png"))
+    savefig(affinity_plot, joinpath(SAVE_DIR, "circles_affinity.png"))
     
     # Print analysis results
     println("\n Circles Clustering Analysis Summary:")
