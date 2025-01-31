@@ -3,10 +3,6 @@ export compute_ari
 export compute_nmi
 export print_efficiency
 
-# for testing the functions
-export contingency_matrix
-export combinations
-
 
 """
     compute_accuracy(y_true::Vector{Int}, y_pred::Vector{Int})
