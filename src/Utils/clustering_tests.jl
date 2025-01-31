@@ -279,6 +279,25 @@ function run_circles_test()
     display(clustering_plot)
 end
 
+function run_clustering_example(dataset_type::String)
+    # Validate input
+    valid_types = ["circles", "spirals", "blobs", "moon"]
+    dataset_type = lowercase(dataset_type)
+    
+    if !(dataset_type in valid_types)
+        error("Invalid dataset type. Available options: $(join(valid_types, ", "))")
+    end
+    
+    # Call appropriate test function based on dataset type
+    if dataset_type == "circles"
+        run_circles_test()
+    elseif dataset_type == "spirals"
+        run_spirals_clustering_test()
+    elseif dataset_type == "blobs"
+        run_blobs_test()
+    elseif dataset_type == "moon"
+        run_moons_test()
+    end
+end
 
-
-results = run_all_shape_tests()
+results = run_clustering_example("moon")
