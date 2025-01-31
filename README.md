@@ -6,7 +6,6 @@
 [![Coverage](https://codecov.io/gh/702ph/SpectralClusteringTools.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/702ph/SpectralClusteringTools.jl)
 
 
-# SpectralClusteringTools
 
 *Tools for Spectral Clustering.*
 
