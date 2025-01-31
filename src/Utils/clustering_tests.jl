@@ -3,6 +3,8 @@ using Plots
 using LinearAlgebra: norm
 using .SpectralClusteringTools
 
+export run_clustering_example
+
 const TEST_SEED = 42
 const SAVE_DIR = "Utils/results"
 
@@ -299,5 +301,3 @@ function run_clustering_example(dataset_type::String)
         run_moons_test()
     end
 end
-
-results = run_clustering_example("moon")
