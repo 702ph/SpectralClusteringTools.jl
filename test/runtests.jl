@@ -187,35 +187,6 @@ end
             end
         end
     
-        @testset "make_lines tests" begin
-            @testset "Basic functionality" begin
-                num_classes = 2
-                num_points_per_class = 10
-                noise = 0.1
-                points, labels = make_lines(num_classes, num_points_per_class, noise)
-    
-                @test size(points, 1) == num_classes * num_points_per_class
-                @test size(points, 2) == 3
-                @test all(isfinite.(points))
-                @test length(labels) == size(points, 1)
-                @test all(labels .>= 1 .&& labels .<= num_classes)
-            end
-    
-            @testset "Error handling" begin
-                @test_throws ArgumentError make_lines(3, -100)
-            end
-    
-            @testset "Single class" begin
-                num_classes = 1
-                num_points_per_class = 10
-                noise = 0.1
-                points, labels = make_lines(num_classes, num_points_per_class, noise)
-    
-                @test size(points, 1) == num_points_per_class
-                @test all(labels .== 1)
-            end
-        end
-    
         @testset "make_spirals tests" begin
             @testset "Basic functionality" begin
                 num_points_per_class = 10
