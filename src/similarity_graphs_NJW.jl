@@ -60,14 +60,6 @@ function epsilon_neighborhood_graph(X::Matrix{Float64}, ε::Float64)
 end
 
 
-# TODO: Determine where this comment should be placed
-"""
-● (Construct) k-nearest neighbor graphs
-● Each vertex is connected to its k nearest neighbors (Connect vertex vi with vertex vj if vj is among the k-nearest neighbors of vi)
-● Two ways: the k-nearest neighbor graph && mutual k-nearest neighbor graph
-"""
-
-
 """
     knn_graph(X::Matrix{Float64}, k::Int)
 
@@ -211,14 +203,6 @@ function mutual_knn_graph(X::Matrix{Float64}, k::Int)
 
     return W
 end
-
-
-"""
-● Construct fully connected graph
-● Connect all points with positive similarity with each other
-● Weight all edge by sij
-● Only useful if the similarity function itself models local neighbors， example: Gaussian
-"""
 
 
 """

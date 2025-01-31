@@ -26,6 +26,8 @@ include("normalized_cuts.jl")
 
 # Basic utilities
 include("Utils/DataSets.jl")
+include("Utils/DataSets_2D.jl")
+include("Utils/compare_results.jl")
 include("Utils/2D_data_testing.jl")
 
 
@@ -54,7 +56,6 @@ export
     recursive_ncut,
     compute_ncut_value,
     compute_image_affinity,
-    compute_partition_cost,
 
     # Data generation
     make_sphere,
