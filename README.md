@@ -10,7 +10,7 @@
 
 *Tools for Spectral Clustering.*
 
-A package for creating test data and providing functions to facilitate clustering analysis.
+A package for creating test data and providing functions to facilitate clustering analysis. The implemented methods follow the approach outlined in A Tutorial on Spectral Clustering by Ulrike von Luxburg (2007). Additionally, the self-tuning spectral clustering technique is based on the methodology described in Self-Tuning Spectral Clustering by Zelnik-Manor & Perona (2004). This allows users to experiment with different clustering scenarios and effectively visualize results.
 
 
 ## Package Features
@@ -18,6 +18,14 @@ A package for creating test data and providing functions to facilitate clusterin
 - Functions for preprocessing data to prepare for spectral clustering.
 - Implementation of spectral clustering algorithms.
 - Utilities for visualizing clustering results and data distributions.
+
+
+## Prerequisites
+
+| Prerequisite | Version | Installation Guide | Required |
+|--------------|---------|--------------------|----------|
+| Julia       | 1.10    | [![Julia](https://img.shields.io/badge/Julia-v1.10-blue)](https://julialang.org/downloads/) | ✅ |
+
 
 
 ## Installation
@@ -29,9 +37,6 @@ This guide will help you set up and install the SpectralClusteringTools.jl packa
 ```
 git clone "https://github.com/702ph/SpectralClusteringTools.jl"
 cd SpectralClusteringTools.jl
-git checkout develop
-git pull origin
-
 ```
 - The first command downloads the repository from GitHub to your local machine.
 - The second command changes your current directory to the repository folder, where the package is located.
@@ -48,19 +53,19 @@ This starts the Julia REPL (Read-Eval-Print Loop), an interactive environment wh
 Once the Julia REPL has started, you should perform the necessary steps to use the package. Follow these steps
 
 1. Inside the Julia REPL, import the package manager by typing:
-```
+```julia
 using Pkg
 ```
 
 
 2. Activate the local environment for the project by running:
-```
+```julia
 Pkg.activate(".")
 ```
 - The `activate()` command tells Julia to use the package environment defined in the current directory (`.` refers to the current folder where the project was cloned).
 
 3. Install all dependencies specified in the project's Project.toml file:
-```
+```julia
 Pkg.instantiate()
 ```
 The `instantiate()` command ensures all required packages for the project are downloaded and installed.
@@ -76,10 +81,14 @@ julia --version
 
 
 ## Example
-In this section, we will demonstrate how to generate and cluster synthetic datasets using different data generation functions. Follow the step-by-step instructions below.
 
-### Step 1: Load Required Packages
-First, load the necessary Julia packages:
+### Quick Start: Generate and Cluster Data in One Step
+
+To simplify the process for users, we have consolidated data generation, clustering, and visualization into a single function. This allows you to execute the entire workflow with just one command.
+
+#### Step 1: Load Required Packages
+
+Before running the function, ensure that you have the necessary packages loaded:
 
 ```julia
 using SpectralClusteringTools
@@ -89,142 +98,68 @@ using Random
 using Statistics
 ```
 
+#### Step 2: Run the Clustering Pipeline
 
-If the compilation of Plots fails, you may need to roll back the version of GR to 0.73.10 by running the following command. For more details on this issue, refer to the following link: https://github.com/jheinen/GR.jl/issues/556
-
-```julia
-Pkg.add(PackageSpec(name="GR", version="0.73.10"))
-```
-
-Next, to enable interactive operations, set *Plotly* as the backend for *Plots*:
-```julia
-import PlotlyJS
-plotlyjs()
-```
-
-### Step 2: Define a Visualization Function
-Define helper functions (These function is planned to be included in the package in the future.)
-```julia
-# visualize given data as a 3D scatter plot grouped by labels.
-function visualize_3d_clusters(points, labels, title; legendpos=:topright)
-    p = scatter(
-        points[:, 1], points[:, 2], points[:, 3],
-        group = labels,
-        title = title,
-        xlabel = "X", ylabel = "Y", zlabel = "Z",
-        aspect_ratio = :auto,
-        marker = :circle,
-        markersize = 0.5,
-        alpha = 0.7,
-        camera = (45, 45),
-        grid = false,
-        background_color = :white,
-        legend = legendpos
-    )
-    return p
-end
-
-
-
-# Computing the best sigma
-function calculate_optimal_sigma(X)
-    n_points = size(X, 2)
-    k_nearest = min(7, n_points - 1)
-    dists = zeros(n_points)
-
-    for i in 1:n_points
-        current_point_dists = Float64[]
-        for j in 1:n_points
-            if i != j
-                distance = norm(X[:,i] - X[:,j])
-                push!(current_point_dists, distance)
-            end
-        end
-        sorted_dists = sort(current_point_dists)
-        if length(sorted_dists) >= k_nearest
-            dists[i] = mean(sorted_dists[1:k_nearest])
-        else
-            dists[i] = mean(sorted_dists)
-        end
-    end
-    
-    local_sigma = median(dists)
-    println("Dist Summ")
-    println("  Min dist", round(minimum(dists), digits=4))
-    println("  Max Dist", round(maximum(dists), digits=4))
-    println("  Median Dist", round(local_sigma, digits=4))
-    
-    optimal_sigma = local_sigma * 0.15
-    println("  Computed Sigma:", round(optimal_sigma, digits=4))
-    
-    return optimal_sigma
-end
-```
-
-
-### Step 3: Generate Test Data
-Follow the steps below to generate test data, perform clustering, and compare the test data with the clustering results.
-```julia
-# Test Data Generation Settings 
-Random.seed!(42)
-num_classes = 3
-points_per_class = 100
-noise = 0.1
-adjust_scale = true
-```
-
-We can generate different types of datasets using the available functions:
-
-#### Example 1: Spheres Dataset
-The `make_spheres` function generates points distributed on the surfaces of spheres.
-```julia
- X, true_labels = make_spheres(num_classes, points_per_class, noise, adjust_scale)
-```
-
-
-#### Example 2: Lines Dataset
-The `make_lines` function generates points distributed along straight lines.
-```julia
-X, true_labels = make_lines(num_classes, points_per_class, noise)
-```
-
-
-#### Example 3: Spirals Dataset
-The `make_spirals` function generates two interlacing spiral patterns.
-```julia
-X, true_labels = make_spirals(points_per_class, noise)
-```
-
-#### Example 4: Blobs Dataset
-The `make_blobs` function generates clusters of points grouped into separate blobs.
-```julia
-X, true_labels = make_blobs(num_classes, points_per_class, noise)
-```
-
-### Step 4: Perform Clustering
-Once the data is generated, we can apply spectral clustering to identify clusters within the data.
+Now, simply call the `run_clustering_example` function to generate test data, apply spectral clustering, and visualize the results:
 
 ```julia
-# Clustering Preparation
-X_norm = (X .- mean(X, dims=1)) ./ std(X, dims=1)
-X_clustering = Matrix(X_norm')
-sigma = calculate_optimal_sigma(X_clustering)
-
-
-# Perform Clustering 
-params = SpectralClusteringParams(
-:fully_connected, 7, 7.0, sigma)
-predicted_labels = spectral_clustering(X_clustering, num_classes, params)
-
-
-# Visualize the Result
-# (Make sure to add a semicolon (;) at the end, otherwise the graph sub-window will open.)
-p1 = visualize_3d_clusters(X, true_labels, "Original Spherical Data", legendpos=:bottomleft);
-p2 = visualize_3d_clusters(X, predicted_labels, "Spectral Clustering Results");
-plot(p1, p2, layout=(1,2), size=(1200,600))
+# Available options: "circles", "spirals", "blobs", "moon"
+run_clustering_example("circles")  
 ```
+
+Each dataset type represents a different clustering scenario:
+
+- **"circles"**: Generates concentric circles of points, useful for testing algorithms that handle nested structures.
+- **"spirals"**: Produces two interlacing spiral patterns, commonly used for evaluating algorithms that handle non-linear separability.
+- **"blobs"**: Generates clusters of points arranged in distinct groups with a shifting center for each class, rather than following a Gaussian distribution.
+- **"moon"**: Creates two crescent-shaped clusters, which are often used for assessing clustering methods on non-linearly separable data.
+
+This function performs the following steps automatically:
+
+- Generates a synthetic dataset based on the selected type.
+- Normalizes the data for clustering.
+- Computes the optimal sigma for affinity matrix calculation.
+- Applies spectral clustering to identify clusters.
+- Visualizes both the original data and the clustering results.
+
+#### Example Output
+
+After running the function, you will see two side-by-side 3D scatter plots:
+
+1. **Original Data Distribution** – Displays the true class labels.
+2. **Spectral Clustering Results** – Shows the predicted clusters.
+
+You can experiment with different dataset types by changing the argument in `run_clustering_example("dataset_type")`.
+
+
+#### Notes & Troubleshooting
+- Ensure you are using **Julia 1.10**.
+- If the compilation of Plots fails, you may need to roll back the version of GR to 0.73.10 by running the following command. For more details on this issue, refer to the following link: https://github.com/jheinen/GR.jl/issues/556
+
+  ```julia
+  Pkg.add(PackageSpec(name="GR", version="0.73.10"))
+  ```
+- If necessary, manually update dependencies using:
+  ```julia
+  Pkg.update()
+  ```
 
 
 
 ## Documentation
-The [documentation](https://702ph.github.io/SpectralClusteringTools.jl/dev/) of the most recently version.
+For more detailed explanations and advanced usage, 
+please refer to the [documentation](https://702ph.github.io/SpectralClusteringTools.jl/stable/). 
+With this streamlined approach, users can quickly experiment 
+with spectral clustering on different dataset types with minimal effort!
+
+
+## References
+- **A Tutorial on Spectral Clustering**, Ulrike von Luxburg, 2007 [Link](https://www.tml.cs.uni-tuebingen.de/team/luxburg/publications/Luxburg07_tutorial.pdf)
+- **Self-Tuning Spectral Clustering**, Zelnik-Manor & Perona, 2004 [Link](https://proceedings.neurips.cc/paper_files/paper/2004/file/40173ea48d9567f1f393b20c855bb40b-Paper.pdf)
+
+
+
+## Contributors
+[![Contributors](https://contrib.rocks/image?repo=702ph/SpectralClusteringTools.jl)](https://github.com/702ph/SpectralClusteringTools.jl/graphs/contributors)
+
+
