@@ -29,6 +29,7 @@ include("Utils/DataSets.jl")
 include("Utils/DataSets_2D.jl")
 include("Utils/compare_results.jl")
 include("Utils/2D_data_testing.jl")
+include("Utils/clustering_tests.jl")
 
 
 # 3. Exports
@@ -60,6 +61,7 @@ export
     # Data generation
     make_sphere,
     generate_mixed_concentric_data,
-    generate_mixed_moons_data
+    generate_mixed_moons_data,
+    run_clustering_example
 
 end # module
