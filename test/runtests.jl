@@ -613,12 +613,12 @@ end
     @testset "normalized_cuts_segmentation" begin
         spatial_coords = [0.0 0.0; 1.0 1.0; 2.0 2.0]
         features = [0.5 1.0; 1.5 2.0; 2.5 3.0]
-        params = NormalizedCutsParams(1.0, 1.0, 0.1, 10, 2)
+        params = NormalizedCutsParams(1.0, 1.0, 5, 10, 2)
 
         segments, W = normalized_cuts_segmentation(spatial_coords, features, params)
         
         @test length(segments) == size(spatial_coords,1)
         @test size(W) == (3,3)
-        @test all(x -> x in [1,2,3], segments)  # Mehrere Cluster möglich
+        @test all(x -> x in [1,2,3], segments)
     end
 end
