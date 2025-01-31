@@ -622,3 +622,17 @@ end
         @test all(x -> x in [1,2,3], segments)
     end
 end
+
+@testset "clustering_tests.jl" begin
+    valid_inputs = ["moon", "circles", "spirals", "blobs"]
+    
+    for input in valid_inputs
+        @testset "Valid input: $input" begin
+            run_clustering_example(input)
+        end
+    end
+
+    @testset "Invalid input" begin
+        @test_throws ErrorException run_clustering_example("invalid_input")
+    end
+end
