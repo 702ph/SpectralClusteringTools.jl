@@ -10,7 +10,7 @@
 
 *Tools for Spectral Clustering.*
 
-A package for creating test data and providing functions to facilitate clustering analysis.
+A package for creating test data and providing functions to facilitate clustering analysis. The implemented methods follow the approach outlined in A Tutorial on Spectral Clustering by Ulrike von Luxburg (2007). Additionally, the self-tuning spectral clustering technique is based on the methodology described in Self-Tuning Spectral Clustering by Zelnik-Manor & Perona (2004). This allows users to experiment with different clustering scenarios and effectively visualize results.
 
 
 ## Package Features
@@ -151,6 +151,12 @@ For more detailed explanations and advanced usage,
 please refer to the [documentation](https://702ph.github.io/SpectralClusteringTools.jl/stable/). 
 With this streamlined approach, users can quickly experiment 
 with spectral clustering on different dataset types with minimal effort!
+
+
+## References
+- **A Tutorial on Spectral Clustering**, Ulrike von Luxburg, 2007 [Link](https://www.tml.cs.uni-tuebingen.de/team/luxburg/publications/Luxburg07_tutorial.pdf)
+- **Self-Tuning Spectral Clustering**, Zelnik-Manor & Perona, 2004 [Link](https://proceedings.neurips.cc/paper_files/paper/2004/file/40173ea48d9567f1f393b20c855bb40b-Paper.pdf)
+
 
 
 ## Contributors
