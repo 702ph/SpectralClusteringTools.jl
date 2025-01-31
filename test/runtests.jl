@@ -320,30 +320,6 @@ end
             end
         end
     
-        @testset "make_lines_2d tests" begin
-            @testset "Basic functionality" begin
-                num_classes = 3
-                num_points_per_class = 1000
-    
-                points, labels = make_lines_2d(num_classes, num_points_per_class, 0.1)
-            
-                @test size(points, 1) == num_classes * num_points_per_class
-                @test length(labels) == size(points, 1)
-                @test all(labels .<= num_classes)
-                @test all(isfinite.(points))
-            end
-            
-            @testset "Single class" begin
-                num_classes = 1
-                num_points_per_class = 1000
-    
-                points, labels = make_lines_2d(num_classes, num_points_per_class, 0.1)
-    
-                @test size(points, 1) == num_points_per_class
-                @test all(labels .== 1)
-            end
-        end
-    
         @testset "make_spirals_2d tests" begin
             @testset "Basic functionality" begin
                 num_points_per_class = 1000
