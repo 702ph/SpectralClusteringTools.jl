@@ -78,6 +78,7 @@ scatter(X[1,:], X[2,:], group=labels, title="Mixed Moons Dataset")
 ```
 """
 function generate_mixed_moons_data(n_samples::Int=300, noise::Float64=0.05)
+    n_samples > 0 || throw(ArgumentError("Number of samples points must be greater than 0"))
     
     t = range(0, π, length=n_samples)
     x1 = cos.(t)

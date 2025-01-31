@@ -22,6 +22,8 @@ Each circle corresponds to a class, and points are normalized.
 `points, labels = make_circles(3, 1000, 0.1, false)`
 """
 function make_circles(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0, adjust_scale::Bool=true)
+    num_classes > 0 || throw(ArgumentError("Number of classes must be greater than 0"))
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
     points = Matrix{Float64}(undef, 0, 2)
     labels = Vector{Int}(undef, 0)
 
@@ -72,6 +74,7 @@ Each spiral corresponds to a class.
 `points, labels = make_spirals_2d(500, 0.1)`
 """
 function make_spirals_2d(num_points_per_class::Int, noise::Float64=0.0)
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
     points = Matrix{Float64}(undef, 0, 2)
     labels = Vector{Int}(undef, 0)
 
@@ -113,6 +116,8 @@ Each blob corresponds to a class.
 `points, labels = make_blobs_2d(5, 500, 0.5)`
 """
 function make_blobs_2d(num_classes::Int, num_points_per_class::Int, noise::Float64=0.0)
+    num_classes > 0 || throw(ArgumentError("Number of classes must be greater than 0"))
+    num_points_per_class > 0 || throw(ArgumentError("Number of points per class must be greater than 0"))
     points = Matrix{Float64}(undef, 0, 2)
     labels = Vector{Int}(undef, 0)
 
@@ -158,6 +163,7 @@ scatter(X[1,:], X[2,:], group=labels, title="Mixed Moons Dataset")
 ```
 """
 function make_moons(n_samples::Int=300, noise::Float64=0.05)
+    n_samples > 0 || throw(ArgumentError("Number of samples points must be greater than 0"))
     
     t = range(0, π, length=n_samples)
     x1 = cos.(t)

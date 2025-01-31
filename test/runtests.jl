@@ -172,7 +172,10 @@ end
             end
     
             @testset "Error handling" begin
-                @test_throws ArgumentError make_spheres(3, -100)
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_spheres(3, -100)
+                    @test_throws ArgumentError make_spheres(-3, 100)
+                end
             end
             
             @testset "Single class" begin
@@ -181,6 +184,48 @@ end
                 noise = 0.0
                 adjust_scale = false
                 points, labels = make_spheres(num_classes, num_points_per_class, noise, adjust_scale)
+    
+                @test size(points, 1) == num_points_per_class
+                @test all(labels .== 1)
+            end
+        end 
+        
+        @testset "make_lines tests" begin
+            @testset "Basic functionality: Scaling disabled" begin
+                num_classes = 2
+                num_points_per_class = 10
+                noise = 0.1
+                points, labels = make_lines(num_classes, num_points_per_class, noise)
+    
+                @test size(points, 1) == num_classes * num_points_per_class
+                @test size(points, 2) == 3
+                @test length(labels) == size(points, 1)
+                @test all(labels .>= 1 .&& labels .<= num_classes)
+            end
+    
+            @testset "Point normalization: Scaling enabled" begin
+                num_classes = 3
+                num_points_per_class = 20
+                noise = 0.1
+                points, _ = make_lines(num_classes, num_points_per_class, noise)
+        
+                @test all(points .>= 0.0)
+                @test all(points .<= 1.0)
+            end
+    
+            @testset "Error handling" begin
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_lines(-5, 500, 0.3)
+                    @test_throws ArgumentError make_lines(5, -500, 0.3)
+                end
+            end
+            
+            @testset "Single class" begin
+                num_classes = 1
+                num_points_per_class = 10
+                noise = 0.0
+
+                points, labels = make_lines(num_classes, num_points_per_class, noise)
     
                 @test size(points, 1) == num_points_per_class
                 @test all(labels .== 1)
@@ -198,6 +243,12 @@ end
                 @test all(isfinite.(points))
                 @test length(labels) == size(points, 1)
                 @test all(labels .>= 1 .&& labels .<= 2)
+            end
+    
+            @testset "Error handling" begin
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_spirals(-500, 0.3)
+                end
             end
     
             @testset "Very few points" begin
@@ -225,7 +276,10 @@ end
             end
     
             @testset "Error handling" begin
-                @test_throws ArgumentError make_blobs(3, -100)
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_blobs(3, -100)
+                    @test_throws ArgumentError make_blobs(-3, 100)
+                end
             end
     
             @testset "Single class" begin
@@ -309,6 +363,13 @@ end
                 @test size(points, 1) > num_classes * num_points_per_class
             end
             
+            @testset "Error handling:" begin
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_circles(-2, 12, 0.1, false)
+                    @test_throws ArgumentError make_circles(2, -12, 0.1, false)
+                end
+            end
+            
             @testset "Single class" begin
                 num_classes = 1
                 num_points_per_class = 1000
@@ -331,6 +392,12 @@ end
                 @test all(labels .<= 2)
                 @test all(isfinite.(points))
             end
+            
+            @testset "Error handling:" begin
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_spirals_2d(-20, 0.1)
+                end
+            end
         end
     
         @testset "make_blobs_2d tests" begin
@@ -346,6 +413,13 @@ end
                 @test all(isfinite.(points))
             end
             
+            @testset "Error handling:" begin
+                @testset "Invalid parameters" begin
+                    @test_throws ArgumentError make_blobs_2d(-2, 12, 0.1)
+                    @test_throws ArgumentError make_blobs_2d(2, -12, 0.1)
+                end
+            end
+
             @testset "Single class" begin
                 num_classes = 1
                 num_points_per_class = 1000
@@ -354,6 +428,25 @@ end
     
                 @test size(points, 1) == num_points_per_class
                 @test all(labels .== 1)
+            end
+        end
+
+        
+        @testset "make_moons tests" begin
+            @testset "Basic functionality" begin
+                n_samples = 1000
+    
+                points, labels = make_moons(n_samples, 0.1)
+            
+                @test length(labels) == size(points, 2)
+                @test all(labels .== 1)
+                @test all(isfinite.(points))
+            end
+        end
+
+        @testset "Error handling:" begin
+            @testset "Invalid parameters" begin
+                @test_throws ArgumentError make_moons(-20, 0.1)
             end
         end
     end
