@@ -2,9 +2,6 @@
 CurrentModule = SpectralClusteringTools
 ```
 
-```@index
-```
-
 # Spectral Clustering: Advanced Guide
 
 ## 1. Introduction
